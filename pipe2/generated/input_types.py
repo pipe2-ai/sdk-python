@@ -6,7 +6,13 @@ from typing import Any, Optional
 from pydantic import Field
 
 from .base_model import BaseModel
-from .enums import assets_select_column, cursor_ordering, order_by
+from .enums import (
+    assets_select_column,
+    capabilities_enum,
+    cursor_ordering,
+    order_by,
+    providers_enum,
+)
 
 
 class Boolean_comparison_exp(BaseModel):
@@ -469,6 +475,16 @@ class bpchar_comparison_exp(BaseModel):
     "does the column match the given SQL regular expression"
 
 
+class capabilities_enum_comparison_exp(BaseModel):
+    """Boolean expression to compare columns of type "capabilities_enum". All fields are combined with logical 'AND'."""
+
+    eq: Optional[capabilities_enum] = Field(alias="_eq", default=None)
+    in_: Optional[list[capabilities_enum]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    neq: Optional[capabilities_enum] = Field(alias="_neq", default=None)
+    nin: Optional[list[capabilities_enum]] = Field(alias="_nin", default=None)
+
+
 class credit_pack_versions_aggregate_order_by(BaseModel):
     '''order by aggregate values of table "credit_pack_versions"'''
 
@@ -757,6 +773,114 @@ class jsonb_comparison_exp(BaseModel):
     nin: Optional[list[Any]] = Field(alias="_nin", default=None)
 
 
+class model_capabilities_aggregate_order_by(BaseModel):
+    '''order by aggregate values of table "model_capabilities"'''
+
+    count: Optional[order_by] = None
+    max: Optional["model_capabilities_max_order_by"] = None
+    min: Optional["model_capabilities_min_order_by"] = None
+
+
+class model_capabilities_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "model_capabilities". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["model_capabilities_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["model_capabilities_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["model_capabilities_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    capability_slug: Optional["capabilities_enum_comparison_exp"] = None
+    model: Optional["models_bool_exp"] = None
+    model_slug: Optional["String_comparison_exp"] = None
+
+
+class model_capabilities_max_order_by(BaseModel):
+    '''order by max() on columns of table "model_capabilities"'''
+
+    model_slug: Optional[order_by] = None
+
+
+class model_capabilities_min_order_by(BaseModel):
+    '''order by min() on columns of table "model_capabilities"'''
+
+    model_slug: Optional[order_by] = None
+
+
+class model_capabilities_order_by(BaseModel):
+    """Ordering options when selecting data from "model_capabilities"."""
+
+    capability_slug: Optional[order_by] = None
+    model: Optional["models_order_by"] = None
+    model_slug: Optional[order_by] = None
+
+
+class model_capabilities_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "model_capabilities"'''
+
+    initial_value: "model_capabilities_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class model_capabilities_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    capability_slug: Optional[capabilities_enum] = None
+    model_slug: Optional[str] = None
+
+
+class models_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "models". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["models_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["models_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["models_bool_exp"]] = Field(alias="_or", default=None)
+    capabilities: Optional["model_capabilities_bool_exp"] = None
+    description: Optional["String_comparison_exp"] = None
+    is_active: Optional["Boolean_comparison_exp"] = None
+    label: Optional["String_comparison_exp"] = None
+    pipeline_models: Optional["pipeline_models_bool_exp"] = None
+    provider: Optional["providers_enum_comparison_exp"] = None
+    slug: Optional["String_comparison_exp"] = None
+    sort_order: Optional["Int_comparison_exp"] = None
+
+
+class models_order_by(BaseModel):
+    """Ordering options when selecting data from "models"."""
+
+    capabilities_aggregate: Optional["model_capabilities_aggregate_order_by"] = None
+    description: Optional[order_by] = None
+    is_active: Optional[order_by] = None
+    label: Optional[order_by] = None
+    pipeline_models_aggregate: Optional["pipeline_models_aggregate_order_by"] = None
+    provider: Optional[order_by] = None
+    slug: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+
+
+class models_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "models"'''
+
+    initial_value: "models_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class models_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    description: Optional[str] = None
+    is_active: Optional[bool] = None
+    label: Optional[str] = None
+    provider: Optional[providers_enum] = None
+    slug: Optional[str] = None
+    sort_order: Optional[int] = None
+
+
 class multipart_part_input(BaseModel):
     e_tag: str = Field(alias="ETag")
     part_number: int = Field(alias="PartNumber")
@@ -897,6 +1021,126 @@ class personal_access_tokens_stream_cursor_value_input(BaseModel):
     scopes: Optional[list[str]] = None
 
 
+class pipeline_models_aggregate_order_by(BaseModel):
+    '''order by aggregate values of table "pipeline_models"'''
+
+    avg: Optional["pipeline_models_avg_order_by"] = None
+    count: Optional[order_by] = None
+    max: Optional["pipeline_models_max_order_by"] = None
+    min: Optional["pipeline_models_min_order_by"] = None
+    stddev: Optional["pipeline_models_stddev_order_by"] = None
+    stddev_pop: Optional["pipeline_models_stddev_pop_order_by"] = None
+    stddev_samp: Optional["pipeline_models_stddev_samp_order_by"] = None
+    sum: Optional["pipeline_models_sum_order_by"] = None
+    var_pop: Optional["pipeline_models_var_pop_order_by"] = None
+    var_samp: Optional["pipeline_models_var_samp_order_by"] = None
+    variance: Optional["pipeline_models_variance_order_by"] = None
+
+
+class pipeline_models_avg_order_by(BaseModel):
+    '''order by avg() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "pipeline_models". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["pipeline_models_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["pipeline_models_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["pipeline_models_bool_exp"]] = Field(alias="_or", default=None)
+    model: Optional["models_bool_exp"] = None
+    model_slug: Optional["String_comparison_exp"] = None
+    pipeline: Optional["pipelines_bool_exp"] = None
+    pipeline_slug: Optional["String_comparison_exp"] = None
+    sort_order: Optional["Int_comparison_exp"] = None
+
+
+class pipeline_models_max_order_by(BaseModel):
+    '''order by max() on columns of table "pipeline_models"'''
+
+    model_slug: Optional[order_by] = None
+    pipeline_slug: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_min_order_by(BaseModel):
+    '''order by min() on columns of table "pipeline_models"'''
+
+    model_slug: Optional[order_by] = None
+    pipeline_slug: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_order_by(BaseModel):
+    """Ordering options when selecting data from "pipeline_models"."""
+
+    model: Optional["models_order_by"] = None
+    model_slug: Optional[order_by] = None
+    pipeline: Optional["pipelines_order_by"] = None
+    pipeline_slug: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_stddev_order_by(BaseModel):
+    '''order by stddev() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_stddev_pop_order_by(BaseModel):
+    '''order by stddev_pop() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_stddev_samp_order_by(BaseModel):
+    '''order by stddev_samp() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "pipeline_models"'''
+
+    initial_value: "pipeline_models_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class pipeline_models_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    model_slug: Optional[str] = None
+    pipeline_slug: Optional[str] = None
+    sort_order: Optional[int] = None
+
+
+class pipeline_models_sum_order_by(BaseModel):
+    '''order by sum() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_var_pop_order_by(BaseModel):
+    '''order by var_pop() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_var_samp_order_by(BaseModel):
+    '''order by var_samp() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
+class pipeline_models_variance_order_by(BaseModel):
+    '''order by variance() on columns of table "pipeline_models"'''
+
+    sort_order: Optional[order_by] = None
+
+
 class pipeline_runs_bool_exp(BaseModel):
     """Boolean expression to filter rows from the table "pipeline_runs". All fields are combined with a logical 'AND'."""
 
@@ -979,8 +1223,8 @@ class pipelines_bool_exp(BaseModel):
     models: Optional["String_array_comparison_exp"] = None
     name: Optional["String_comparison_exp"] = None
     output_schema: Optional["jsonb_comparison_exp"] = None
+    pipeline_models: Optional["pipeline_models_bool_exp"] = None
     preview_url: Optional["String_comparison_exp"] = None
-    pricing: Optional["jsonb_comparison_exp"] = None
     providers: Optional["String_array_comparison_exp"] = None
     seo_content: Optional["String_comparison_exp"] = None
     seo_faq: Optional["jsonb_comparison_exp"] = None
@@ -1004,8 +1248,8 @@ class pipelines_order_by(BaseModel):
     models: Optional[order_by] = None
     name: Optional[order_by] = None
     output_schema: Optional[order_by] = None
+    pipeline_models_aggregate: Optional["pipeline_models_aggregate_order_by"] = None
     preview_url: Optional[order_by] = None
-    pricing: Optional[order_by] = None
     providers: Optional[order_by] = None
     seo_content: Optional[order_by] = None
     seo_faq: Optional[order_by] = None
@@ -1040,7 +1284,6 @@ class pipelines_stream_cursor_value_input(BaseModel):
     name: Optional[str] = None
     output_schema: Optional[Any] = None
     preview_url: Optional[str] = None
-    pricing: Optional[Any] = None
     providers: Optional[list[str]] = None
     seo_content: Optional[str] = None
     seo_faq: Optional[Any] = None
@@ -1289,6 +1532,16 @@ class plans_stream_cursor_value_input(BaseModel):
     sort_order: Optional[int] = None
 
 
+class providers_enum_comparison_exp(BaseModel):
+    """Boolean expression to compare columns of type "providers_enum". All fields are combined with logical 'AND'."""
+
+    eq: Optional[providers_enum] = Field(alias="_eq", default=None)
+    in_: Optional[list[providers_enum]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    neq: Optional[providers_enum] = Field(alias="_neq", default=None)
+    nin: Optional[list[providers_enum]] = Field(alias="_nin", default=None)
+
+
 class subscriptions_aggregate_order_by(BaseModel):
     '''order by aggregate values of table "subscriptions"'''
 
@@ -1444,15 +1697,27 @@ executions_visibility_bool_exp.model_rebuild()
 executions_visibility_stream_cursor_input.model_rebuild()
 jsonb_cast_exp.model_rebuild()
 jsonb_comparison_exp.model_rebuild()
+model_capabilities_aggregate_order_by.model_rebuild()
+model_capabilities_bool_exp.model_rebuild()
+model_capabilities_order_by.model_rebuild()
+model_capabilities_stream_cursor_input.model_rebuild()
+models_bool_exp.model_rebuild()
+models_order_by.model_rebuild()
+models_stream_cursor_input.model_rebuild()
 notifications_bool_exp.model_rebuild()
 notifications_stream_cursor_input.model_rebuild()
 notifications_updates.model_rebuild()
 personal_access_tokens_bool_exp.model_rebuild()
 personal_access_tokens_stream_cursor_input.model_rebuild()
+pipeline_models_aggregate_order_by.model_rebuild()
+pipeline_models_bool_exp.model_rebuild()
+pipeline_models_order_by.model_rebuild()
+pipeline_models_stream_cursor_input.model_rebuild()
 pipeline_runs_bool_exp.model_rebuild()
 pipeline_runs_order_by.model_rebuild()
 pipeline_runs_stream_cursor_input.model_rebuild()
 pipelines_bool_exp.model_rebuild()
+pipelines_order_by.model_rebuild()
 pipelines_stream_cursor_input.model_rebuild()
 plan_versions_aggregate_order_by.model_rebuild()
 plan_versions_bool_exp.model_rebuild()

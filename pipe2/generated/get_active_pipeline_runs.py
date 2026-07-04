@@ -21,6 +21,7 @@ class GetActivePipelineRunsPipelineRuns(BaseModel):
 class GetActivePipelineRunsPipelineRunsPipeline(BaseModel):
     name: str
     slug: str
+    cancellable: bool
 
 
 class GetActivePipelineRunsActiveCount(BaseModel):

@@ -22,7 +22,6 @@ class GetPipelinesListPipelines(BaseModel):
     models: list[str]
     tags: list[str]
     hints: Any
-    pricing: Any
     cancellable: bool
 
 

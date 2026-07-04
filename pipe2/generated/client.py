@@ -39,7 +39,6 @@ from .get_pipeline_runs import GetPipelineRuns
 from .get_pipeline_runs_by_slug import GetPipelineRunsBySlug
 from .get_pipelines import GetPipelines
 from .get_pipelines_list import GetPipelinesList
-from .get_pipelines_pricing import GetPipelinesPricing
 from .get_plans import GetPlans
 from .get_subscription import GetSubscription
 from .get_user_assets import GetUserAssets
@@ -50,6 +49,8 @@ from .init_verification_flow import InitVerificationFlow
 from .input_types import assets_bool_exp, multipart_part_input, pipeline_runs_bool_exp
 from .mark_all_notifications_read import MarkAllNotificationsRead
 from .mark_notification_read import MarkNotificationRead
+from .pipeline_models import PipelineModels
+from .pipeline_pricing import PipelinePricing
 from .request_account_deletion import RequestAccountDeletion
 from .request_avatar_upload import RequestAvatarUpload
 from .request_multipart_upload import RequestMultipartUpload
@@ -1015,7 +1016,6 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 seo_faq
                 tags
                 hints
-                pricing
                 cancellable
               }
             }
@@ -1052,7 +1052,6 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 models
                 tags
                 hints
-                pricing
                 cancellable
               }
             }
@@ -1066,27 +1065,6 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         )
         data = self.get_data(response)
         return GetPipelinesList.model_validate(data)
-
-    async def get_pipelines_pricing(
-        self, slugs: list[str], **kwargs: Any
-    ) -> GetPipelinesPricing:
-        query = gql("""
-            query GetPipelinesPricing($slugs: [String!]!) {
-              pipelines(where: {slug: {_in: $slugs}}) {
-                slug
-                pricing
-              }
-            }
-            """)
-        variables: dict[str, object] = {"slugs": slugs}
-        response = await self.execute(
-            query=query,
-            operation_name="GetPipelinesPricing",
-            variables=variables,
-            **kwargs,
-        )
-        data = self.get_data(response)
-        return GetPipelinesPricing.model_validate(data)
 
     async def estimate_pipeline_cost(
         self, pipeline_slug: str, input: Any, **kwargs: Any
@@ -1110,6 +1088,47 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         )
         data = self.get_data(response)
         return EstimatePipelineCost.model_validate(data)
+
+    async def pipeline_models(self, slug: str, **kwargs: Any) -> PipelineModels:
+        query = gql("""
+            query PipelineModels($slug: String!) {
+              pipeline_models(
+                where: {pipeline_slug: {_eq: $slug}}
+                order_by: {sort_order: asc}
+              ) {
+                model_slug
+                model {
+                  slug
+                  label
+                  description
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"slug": slug}
+        response = await self.execute(
+            query=query, operation_name="PipelineModels", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return PipelineModels.model_validate(data)
+
+    async def pipeline_pricing(self, **kwargs: Any) -> PipelinePricing:
+        query = gql("""
+            query PipelinePricing {
+              pipeline_pricing {
+                slug
+                from_mc
+                to_mc
+                metered
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query, operation_name="PipelinePricing", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return PipelinePricing.model_validate(data)
 
     async def run_pipeline(
         self, pipeline_slug: str, input: Any, **kwargs: Any
@@ -1167,6 +1186,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   output_schema
                   input_schema
                   ui_schema
+                  cancellable
                 }
                 assets {
                   id
@@ -1212,6 +1232,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   output_schema
                   input_schema
                   ui_schema
+                  cancellable
                 }
                 status
                 input
@@ -1277,6 +1298,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   output_schema
                   input_schema
                   ui_schema
+                  cancellable
                 }
                 input
                 output
@@ -1327,6 +1349,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 pipeline {
                   name
                   slug
+                  cancellable
                 }
               }
               active_count: pipeline_runs_aggregate(
@@ -1454,6 +1477,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   output_schema
                   input_schema
                   ui_schema
+                  cancellable
                 }
                 assets {
                   id

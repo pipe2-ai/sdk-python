@@ -27,7 +27,6 @@ class GetPipelinesPipelines(BaseModel):
     seo_faq: Optional[Any]
     tags: list[str]
     hints: Any
-    pricing: Any
     cancellable: bool
 
 

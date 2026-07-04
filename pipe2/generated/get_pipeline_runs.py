@@ -31,6 +31,7 @@ class GetPipelineRunsPipelineRunsPipeline(BaseModel):
     output_schema: Any
     input_schema: Any
     ui_schema: Any
+    cancellable: bool
 
 
 class GetPipelineRunsPipelineRunsWorkflowExecution(BaseModel):

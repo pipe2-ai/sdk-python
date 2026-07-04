@@ -35,6 +35,17 @@ class assets_select_column(str, Enum):
     url = "url"
 
 
+class capabilities_enum(str, Enum):
+    audio_to_text = "audio_to_text"
+    image_to_image = "image_to_image"
+    image_to_video = "image_to_video"
+    text_to_image = "text_to_image"
+    text_to_music = "text_to_music"
+    text_to_speech = "text_to_speech"
+    text_to_video = "text_to_video"
+    video_to_video = "video_to_video"
+
+
 class credit_pack_versions_select_column(str, Enum):
     created_at = "created_at"
     credit_pack_id = "credit_pack_id"
@@ -69,6 +80,20 @@ class executions_visibility_select_column(str, Enum):
     workflow_type_name = "workflow_type_name"
 
 
+class model_capabilities_select_column(str, Enum):
+    capability_slug = "capability_slug"
+    model_slug = "model_slug"
+
+
+class models_select_column(str, Enum):
+    description = "description"
+    is_active = "is_active"
+    label = "label"
+    provider = "provider"
+    slug = "slug"
+    sort_order = "sort_order"
+
+
 class notifications_select_column(str, Enum):
     body = "body"
     created_at = "created_at"
@@ -98,6 +123,12 @@ class personal_access_tokens_select_column(str, Enum):
     scopes = "scopes"
 
 
+class pipeline_models_select_column(str, Enum):
+    model_slug = "model_slug"
+    pipeline_slug = "pipeline_slug"
+    sort_order = "sort_order"
+
+
 class pipeline_runs_select_column(str, Enum):
     completed_at = "completed_at"
     created_at = "created_at"
@@ -125,7 +156,6 @@ class pipelines_select_column(str, Enum):
     name = "name"
     output_schema = "output_schema"
     preview_url = "preview_url"
-    pricing = "pricing"
     providers = "providers"
     seo_content = "seo_content"
     seo_faq = "seo_faq"
@@ -156,6 +186,14 @@ class plans_select_column(str, Enum):
     name = "name"
     slug = "slug"
     sort_order = "sort_order"
+
+
+class providers_enum(str, Enum):
+    elevenlabs = "elevenlabs"
+    gemini = "gemini"
+    openai = "openai"
+    volcengine = "volcengine"
+    xai = "xai"
 
 
 class subscriptions_select_column(str, Enum):
