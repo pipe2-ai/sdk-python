@@ -17,6 +17,7 @@ from .change_password import ChangePassword
 from .complete_multipart_upload import CompleteMultipartUpload
 from .confirm_account_deletion import ConfirmAccountDeletion
 from .create_asset import CreateAsset
+from .create_checkout_session import CreateCheckoutSession
 from .create_personal_access_token import CreatePersonalAccessToken
 from .delete_asset_action import DeleteAssetAction
 from .ensure_affiliate import EnsureAffiliate
@@ -42,24 +43,23 @@ from .get_pipelines_list import GetPipelinesList
 from .get_plans import GetPlans
 from .get_subscription import GetSubscription
 from .get_user_assets import GetUserAssets
-from .init_login_flow import InitLoginFlow
-from .init_recovery_flow import InitRecoveryFlow
-from .init_signup_flow import InitSignupFlow
 from .init_verification_flow import InitVerificationFlow
 from .input_types import assets_bool_exp, multipart_part_input, pipeline_runs_bool_exp
+from .login import Login
 from .mark_all_notifications_read import MarkAllNotificationsRead
 from .mark_notification_read import MarkNotificationRead
 from .pipeline_models import PipelineModels
 from .pipeline_pricing import PipelinePricing
+from .register import Register
 from .request_account_deletion import RequestAccountDeletion
 from .request_avatar_upload import RequestAvatarUpload
 from .request_multipart_upload import RequestMultipartUpload
+from .request_password_reset import RequestPasswordReset
 from .request_upload import RequestUpload
+from .reset_password import ResetPassword
 from .revoke_personal_access_token import RevokePersonalAccessToken
 from .run_pipeline import RunPipeline
-from .submit_login_flow import SubmitLoginFlow
-from .submit_recovery_flow import SubmitRecoveryFlow
-from .submit_signup_flow import SubmitSignupFlow
+from .set_run_share import SetRunShare
 from .submit_social_login import SubmitSocialLogin
 from .submit_verification_code import SubmitVerificationCode
 from .update_asset_tags import UpdateAssetTags
@@ -650,115 +650,68 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return UpdateAssetTags.model_validate(data)
 
-    async def init_login_flow(self, **kwargs: Any) -> InitLoginFlow:
+    async def login(
+        self,
+        email: str,
+        password: str,
+        referral_code: Union[Optional[str], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> Login:
         query = gql("""
-            mutation InitLoginFlow {
-              init_login_flow {
-                id
-                csrf_token
+            mutation Login($email: String!, $password: String!, $referral_code: String) {
+              login(email: $email, password: $password, referral_code: $referral_code) {
+                success
+                message
+                token
+                affiliate_id
               }
             }
             """)
-        variables: dict[str, object] = {}
+        variables: dict[str, object] = {
+            "email": email,
+            "password": password,
+            "referral_code": referral_code,
+        }
         response = await self.execute(
-            query=query, operation_name="InitLoginFlow", variables=variables, **kwargs
+            query=query, operation_name="Login", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return InitLoginFlow.model_validate(data)
+        return Login.model_validate(data)
 
-    async def submit_login_flow(
+    async def register(
         self,
-        flow_id: str,
         email: str,
         password: str,
-        csrf_token: str,
+        name: str,
         referral_code: Union[Optional[str], UnsetType] = UNSET,
         **kwargs: Any,
-    ) -> SubmitLoginFlow:
+    ) -> Register:
         query = gql("""
-            mutation SubmitLoginFlow($flowId: String!, $email: String!, $password: String!, $csrf_token: String!, $referral_code: String) {
-              submit_login_flow(
-                flowId: $flowId
+            mutation Register($email: String!, $password: String!, $name: String!, $referral_code: String) {
+              register(
                 email: $email
                 password: $password
-                csrf_token: $csrf_token
+                name: $name
                 referral_code: $referral_code
               ) {
                 success
                 message
                 token
-                whop_affiliate_id
+                affiliate_id
               }
             }
             """)
         variables: dict[str, object] = {
-            "flowId": flow_id,
-            "email": email,
-            "password": password,
-            "csrf_token": csrf_token,
-            "referral_code": referral_code,
-        }
-        response = await self.execute(
-            query=query, operation_name="SubmitLoginFlow", variables=variables, **kwargs
-        )
-        data = self.get_data(response)
-        return SubmitLoginFlow.model_validate(data)
-
-    async def init_signup_flow(self, **kwargs: Any) -> InitSignupFlow:
-        query = gql("""
-            mutation InitSignupFlow {
-              init_signup_flow {
-                id
-                csrf_token
-              }
-            }
-            """)
-        variables: dict[str, object] = {}
-        response = await self.execute(
-            query=query, operation_name="InitSignupFlow", variables=variables, **kwargs
-        )
-        data = self.get_data(response)
-        return InitSignupFlow.model_validate(data)
-
-    async def submit_signup_flow(
-        self,
-        flow_id: str,
-        email: str,
-        password: str,
-        name: str,
-        csrf_token: str,
-        **kwargs: Any,
-    ) -> SubmitSignupFlow:
-        query = gql("""
-            mutation SubmitSignupFlow($flowId: String!, $email: String!, $password: String!, $name: String!, $csrf_token: String!) {
-              submit_signup_flow(
-                flowId: $flowId
-                email: $email
-                password: $password
-                name: $name
-                csrf_token: $csrf_token
-              ) {
-                success
-                message
-                token
-              }
-            }
-            """)
-        variables: dict[str, object] = {
-            "flowId": flow_id,
             "email": email,
             "password": password,
             "name": name,
-            "csrf_token": csrf_token,
+            "referral_code": referral_code,
         }
         response = await self.execute(
-            query=query,
-            operation_name="SubmitSignupFlow",
-            variables=variables,
-            **kwargs,
+            query=query, operation_name="Register", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return SubmitSignupFlow.model_validate(data)
+        return Register.model_validate(data)
 
     async def submit_social_login(
         self, provider: str, **kwargs: Any
@@ -830,10 +783,12 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return SubmitVerificationCode.model_validate(data)
 
-    async def init_recovery_flow(self, email: str, **kwargs: Any) -> InitRecoveryFlow:
+    async def request_password_reset(
+        self, email: str, **kwargs: Any
+    ) -> RequestPasswordReset:
         query = gql("""
-            mutation InitRecoveryFlow($email: String!) {
-              init_recovery_flow(email: $email) {
+            mutation RequestPasswordReset($email: String!) {
+              request_password_reset(email: $email) {
                 success
                 message
               }
@@ -842,41 +797,34 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         variables: dict[str, object] = {"email": email}
         response = await self.execute(
             query=query,
-            operation_name="InitRecoveryFlow",
+            operation_name="RequestPasswordReset",
             variables=variables,
             **kwargs,
         )
         data = self.get_data(response)
-        return InitRecoveryFlow.model_validate(data)
+        return RequestPasswordReset.model_validate(data)
 
-    async def submit_recovery_flow(
-        self, flow_id: str, password: str, csrf_token: str, **kwargs: Any
-    ) -> SubmitRecoveryFlow:
+    async def reset_password(
+        self, email: str, code: str, new_password: str, **kwargs: Any
+    ) -> ResetPassword:
         query = gql("""
-            mutation SubmitRecoveryFlow($flowId: String!, $password: String!, $csrf_token: String!) {
-              submit_recovery_flow(
-                flowId: $flowId
-                password: $password
-                csrf_token: $csrf_token
-              ) {
+            mutation ResetPassword($email: String!, $code: String!, $newPassword: String!) {
+              reset_password(email: $email, code: $code, newPassword: $newPassword) {
                 success
                 message
               }
             }
             """)
         variables: dict[str, object] = {
-            "flowId": flow_id,
-            "password": password,
-            "csrf_token": csrf_token,
+            "email": email,
+            "code": code,
+            "newPassword": new_password,
         }
         response = await self.execute(
-            query=query,
-            operation_name="SubmitRecoveryFlow",
-            variables=variables,
-            **kwargs,
+            query=query, operation_name="ResetPassword", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return SubmitRecoveryFlow.model_validate(data)
+        return ResetPassword.model_validate(data)
 
     async def get_credit_balance(self, **kwargs: Any) -> GetCreditBalance:
         query = gql("""
@@ -1017,6 +965,37 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 tags
                 hints
                 cancellable
+                translations {
+                  locale
+                  name
+                  description
+                  seo_content
+                  seo_faq
+                  hints
+                  form_i18n
+                }
+                examples(order_by: [{sort_order: asc}, {created_at: asc}]) {
+                  id
+                  title
+                  caption
+                  output_url
+                  output_kind
+                  input_url
+                  input_kind
+                  content
+                  inputs
+                  thumbnail_url
+                  model_slug
+                  model {
+                    slug
+                    label
+                  }
+                  translations {
+                    locale
+                    title
+                    caption
+                  }
+                }
               }
             }
             """)
@@ -1076,6 +1055,11 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 reservation_mc
                 estimated_mc
                 is_metered
+                routed_model
+                routed_reason_code
+                routed_reason_params
+                incompatible_models
+                engine_caps
               }
             }
             """)
@@ -1097,10 +1081,16 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 order_by: {sort_order: asc}
               ) {
                 model_slug
+                sort_order
                 model {
                   slug
                   label
                   description
+                  provider
+                  translations {
+                    locale
+                    description
+                  }
                 }
               }
             }
@@ -1180,6 +1170,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 credits_charged
                 created_at
                 completed_at
+                share_token
+                share_watermark
                 pipeline {
                   name
                   slug
@@ -1241,6 +1233,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 credits_charged
                 created_at
                 completed_at
+                share_token
+                share_watermark
                 workflow_execution {
                   status
                   start_time
@@ -1306,6 +1300,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 credits_charged
                 created_at
                 completed_at
+                share_token
+                share_watermark
                 assets {
                   id
                   type
@@ -1371,6 +1367,36 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetActivePipelineRuns.model_validate(data)
 
+    async def set_run_share(
+        self,
+        id: Any,
+        watermark: bool,
+        token: Union[Optional[Any], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> SetRunShare:
+        query = gql("""
+            mutation SetRunShare($id: uuid!, $token: uuid, $watermark: Boolean!) {
+              update_pipeline_runs_by_pk(
+                pk_columns: {id: $id}
+                _set: {share_token: $token, share_watermark: $watermark}
+              ) {
+                id
+                share_token
+                share_watermark
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "id": id,
+            "token": token,
+            "watermark": watermark,
+        }
+        response = await self.execute(
+            query=query, operation_name="SetRunShare", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return SetRunShare.model_validate(data)
+
     async def get_plans(self, **kwargs: Any) -> GetPlans:
         query = gql("""
             query GetPlans {
@@ -1381,6 +1407,12 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 description
                 features
                 sort_order
+                translations {
+                  locale
+                  name
+                  description
+                  features
+                }
                 versions(where: {is_current: {_eq: true}}, limit: 1) {
                   id
                   whop_plan_id
@@ -1407,6 +1439,10 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 slug
                 name
                 sort_order
+                translations {
+                  locale
+                  name
+                }
                 versions(where: {is_current: {_eq: true}}, limit: 1) {
                   id
                   whop_plan_id
@@ -1456,6 +1492,36 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         )
         data = self.get_data(response)
         return GetSubscription.model_validate(data)
+
+    async def create_checkout_session(
+        self,
+        whop_plan_id: str,
+        affiliate_code: Union[Optional[str], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> CreateCheckoutSession:
+        query = gql("""
+            mutation CreateCheckoutSession($whop_plan_id: String!, $affiliate_code: String) {
+              create_checkout_session(
+                whop_plan_id: $whop_plan_id
+                affiliate_code: $affiliate_code
+              ) {
+                success
+                url
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "whop_plan_id": whop_plan_id,
+            "affiliate_code": affiliate_code,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="CreateCheckoutSession",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return CreateCheckoutSession.model_validate(data)
 
     async def watch_pipeline_run(
         self, run_id: Any, **kwargs: Any

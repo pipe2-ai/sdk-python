@@ -15,7 +15,13 @@ class GetCreditPacksCreditPacks(BaseModel):
     slug: str
     name: str
     sort_order: int
+    translations: list["GetCreditPacksCreditPacksTranslations"]
     versions: list["GetCreditPacksCreditPacksVersions"]
+
+
+class GetCreditPacksCreditPacksTranslations(BaseModel):
+    locale: str
+    name: Optional[str]
 
 
 class GetCreditPacksCreditPacksVersions(BaseModel):

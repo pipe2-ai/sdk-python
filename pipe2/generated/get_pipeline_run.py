@@ -21,6 +21,8 @@ class GetPipelineRunPipelineRunsByPk(BaseModel):
     credits_charged: Optional[int]
     created_at: Any
     completed_at: Optional[Any]
+    share_token: Optional[Any]
+    share_watermark: bool
     pipeline: "GetPipelineRunPipelineRunsByPkPipeline"
     assets: list["GetPipelineRunPipelineRunsByPkAssets"]
     workflow_execution: Optional["GetPipelineRunPipelineRunsByPkWorkflowExecution"]

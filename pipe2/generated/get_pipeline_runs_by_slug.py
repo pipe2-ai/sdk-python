@@ -23,6 +23,8 @@ class GetPipelineRunsBySlugPipelineRuns(BaseModel):
     credits_charged: Optional[int]
     created_at: Any
     completed_at: Optional[Any]
+    share_token: Optional[Any]
+    share_watermark: bool
     assets: list["GetPipelineRunsBySlugPipelineRunsAssets"]
     workflow_execution: Optional["GetPipelineRunsBySlugPipelineRunsWorkflowExecution"]
 

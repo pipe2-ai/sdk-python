@@ -6,14 +6,15 @@ from typing import Optional
 from .base_model import BaseModel
 
 
-class SubmitSignupFlow(BaseModel):
-    submit_signup_flow: "SubmitSignupFlowSubmitSignupFlow"
+class Login(BaseModel):
+    login: "LoginLogin"
 
 
-class SubmitSignupFlowSubmitSignupFlow(BaseModel):
+class LoginLogin(BaseModel):
     success: bool
     message: str
     token: Optional[str]
+    affiliate_id: Optional[str]
 
 
-SubmitSignupFlow.model_rebuild()
+Login.model_rebuild()

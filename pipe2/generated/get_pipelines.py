@@ -3,6 +3,8 @@
 
 from typing import Any, Optional
 
+from pydantic import Field
+
 from .base_model import BaseModel
 
 
@@ -28,6 +30,47 @@ class GetPipelinesPipelines(BaseModel):
     tags: list[str]
     hints: Any
     cancellable: bool
+    translations: list["GetPipelinesPipelinesTranslations"]
+    examples: list["GetPipelinesPipelinesExamples"]
+
+
+class GetPipelinesPipelinesTranslations(BaseModel):
+    locale: str
+    name: Optional[str]
+    description: Optional[str]
+    seo_content: Optional[str]
+    seo_faq: Optional[Any]
+    hints: Optional[Any]
+    form_i_18_n: Optional[Any] = Field(alias="form_i18n")
+
+
+class GetPipelinesPipelinesExamples(BaseModel):
+    id: Any
+    title: str
+    caption: Optional[str]
+    output_url: Optional[str]
+    output_kind: str
+    input_url: Optional[str]
+    input_kind: Optional[str]
+    content: Optional[str]
+    inputs: Optional[Any]
+    thumbnail_url: Optional[str]
+    model_slug: Optional[str]
+    model: Optional["GetPipelinesPipelinesExamplesModel"]
+    translations: list["GetPipelinesPipelinesExamplesTranslations"]
+
+
+class GetPipelinesPipelinesExamplesModel(BaseModel):
+    slug: str
+    label: str
+
+
+class GetPipelinesPipelinesExamplesTranslations(BaseModel):
+    locale: str
+    title: Optional[str]
+    caption: Optional[str]
 
 
 GetPipelines.model_rebuild()
+GetPipelinesPipelines.model_rebuild()
+GetPipelinesPipelinesExamples.model_rebuild()

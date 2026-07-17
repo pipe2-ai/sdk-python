@@ -35,15 +35,11 @@ class assets_select_column(str, Enum):
     url = "url"
 
 
-class capabilities_enum(str, Enum):
-    audio_to_text = "audio_to_text"
-    image_to_image = "image_to_image"
-    image_to_video = "image_to_video"
-    text_to_image = "text_to_image"
-    text_to_music = "text_to_music"
-    text_to_speech = "text_to_speech"
-    text_to_video = "text_to_video"
-    video_to_video = "video_to_video"
+class credit_pack_translations_select_column(str, Enum):
+    credit_pack_id = "credit_pack_id"
+    locale = "locale"
+    name = "name"
+    updated_at = "updated_at"
 
 
 class credit_pack_versions_select_column(str, Enum):
@@ -80,9 +76,19 @@ class executions_visibility_select_column(str, Enum):
     workflow_type_name = "workflow_type_name"
 
 
-class model_capabilities_select_column(str, Enum):
-    capability_slug = "capability_slug"
+class locales_select_column(str, Enum):
+    code = "code"
+    dir = "dir"
+    label = "label"
+    native_name = "native_name"
+    sort_order = "sort_order"
+
+
+class model_translations_select_column(str, Enum):
+    description = "description"
+    locale = "locale"
     model_slug = "model_slug"
+    updated_at = "updated_at"
 
 
 class models_select_column(str, Enum):
@@ -123,6 +129,33 @@ class personal_access_tokens_select_column(str, Enum):
     scopes = "scopes"
 
 
+class pipeline_examples_select_column(str, Enum):
+    caption = "caption"
+    content = "content"
+    created_at = "created_at"
+    id = "id"
+    input_kind = "input_kind"
+    input_url = "input_url"
+    inputs = "inputs"
+    is_active = "is_active"
+    model_slug = "model_slug"
+    output_kind = "output_kind"
+    output_url = "output_url"
+    pipeline_id = "pipeline_id"
+    sort_order = "sort_order"
+    thumbnail_url = "thumbnail_url"
+    title = "title"
+    updated_at = "updated_at"
+
+
+class pipeline_examples_translations_select_column(str, Enum):
+    caption = "caption"
+    example_id = "example_id"
+    locale = "locale"
+    title = "title"
+    updated_at = "updated_at"
+
+
 class pipeline_models_select_column(str, Enum):
     model_slug = "model_slug"
     pipeline_slug = "pipeline_slug"
@@ -138,9 +171,23 @@ class pipeline_runs_select_column(str, Enum):
     input = "input"
     output = "output"
     pipeline_id = "pipeline_id"
+    share_token = "share_token"
+    share_watermark = "share_watermark"
     started_at = "started_at"
     status = "status"
     temporal_workflow_id = "temporal_workflow_id"
+
+
+class pipeline_translations_select_column(str, Enum):
+    description = "description"
+    form_i18n = "form_i18n"
+    hints = "hints"
+    locale = "locale"
+    name = "name"
+    pipeline_id = "pipeline_id"
+    seo_content = "seo_content"
+    seo_faq = "seo_faq"
+    updated_at = "updated_at"
 
 
 class pipelines_select_column(str, Enum):
@@ -165,6 +212,15 @@ class pipelines_select_column(str, Enum):
     ui_schema = "ui_schema"
 
 
+class plan_translations_select_column(str, Enum):
+    description = "description"
+    features = "features"
+    locale = "locale"
+    name = "name"
+    plan_id = "plan_id"
+    updated_at = "updated_at"
+
+
 class plan_versions_select_column(str, Enum):
     created_at = "created_at"
     deprecated_at = "deprecated_at"
@@ -186,14 +242,6 @@ class plans_select_column(str, Enum):
     name = "name"
     slug = "slug"
     sort_order = "sort_order"
-
-
-class providers_enum(str, Enum):
-    elevenlabs = "elevenlabs"
-    gemini = "gemini"
-    openai = "openai"
-    volcengine = "volcengine"
-    xai = "xai"
 
 
 class subscriptions_select_column(str, Enum):

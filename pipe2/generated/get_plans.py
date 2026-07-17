@@ -17,7 +17,15 @@ class GetPlansPlans(BaseModel):
     description: Optional[str]
     features: Any
     sort_order: int
+    translations: list["GetPlansPlansTranslations"]
     versions: list["GetPlansPlansVersions"]
+
+
+class GetPlansPlansTranslations(BaseModel):
+    locale: str
+    name: Optional[str]
+    description: Optional[str]
+    features: Optional[Any]
 
 
 class GetPlansPlansVersions(BaseModel):
