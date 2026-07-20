@@ -1,8 +1,13 @@
 [project]
 name = "pipe2"
-version = "2026.07.5"
+version = "2026.07.6"
 description = "Pipe2.ai Python SDK — typed GraphQL client"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
+keywords = ["pipe2", "ai", "api", "sdk", "text-to-video", "video-generation", "image-generation", "text-to-speech"]
+urls = { Homepage = "https://pipe2.ai" }
 dependencies = ["httpx>=0.25", "pydantic>=2.0"]
 
 [build-system]
