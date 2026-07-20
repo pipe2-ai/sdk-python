@@ -376,6 +376,7 @@ from .input_types import (
     uuid_comparison_exp,
 )
 from .login import Login, LoginLogin
+from .logout import Logout, LogoutLogout
 from .mark_all_notifications_read import (
     MarkAllNotificationsRead,
     MarkAllNotificationsReadUpdateNotifications,
@@ -417,7 +418,6 @@ from .revoke_personal_access_token import (
 )
 from .run_pipeline import RunPipeline, RunPipelineRunPipeline
 from .set_run_share import SetRunShare, SetRunShareUpdatePipelineRunsByPk
-from .submit_social_login import SubmitSocialLogin, SubmitSocialLoginSubmitSocialLogin
 from .submit_verification_code import (
     SubmitVerificationCode,
     SubmitVerificationCodeSubmitVerificationCode,
@@ -560,6 +560,8 @@ __all__ = [
     "Int_comparison_exp",
     "Login",
     "LoginLogin",
+    "Logout",
+    "LogoutLogout",
     "MarkAllNotificationsRead",
     "MarkAllNotificationsReadUpdateNotifications",
     "MarkNotificationRead",
@@ -594,8 +596,6 @@ __all__ = [
     "SetRunShareUpdatePipelineRunsByPk",
     "String_array_comparison_exp",
     "String_comparison_exp",
-    "SubmitSocialLogin",
-    "SubmitSocialLoginSubmitSocialLogin",
     "SubmitVerificationCode",
     "SubmitVerificationCodeSubmitVerificationCode",
     "UpdateAssetTags",

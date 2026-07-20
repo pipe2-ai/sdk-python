@@ -46,6 +46,7 @@ from .get_user_assets import GetUserAssets
 from .init_verification_flow import InitVerificationFlow
 from .input_types import assets_bool_exp, multipart_part_input, pipeline_runs_bool_exp
 from .login import Login
+from .logout import Logout
 from .mark_all_notifications_read import MarkAllNotificationsRead
 from .mark_notification_read import MarkNotificationRead
 from .pipeline_models import PipelineModels
@@ -60,7 +61,6 @@ from .reset_password import ResetPassword
 from .revoke_personal_access_token import RevokePersonalAccessToken
 from .run_pipeline import RunPipeline
 from .set_run_share import SetRunShare
-from .submit_social_login import SubmitSocialLogin
 from .submit_verification_code import SubmitVerificationCode
 from .update_asset_tags import UpdateAssetTags
 from .watch_active_pipeline_runs import WatchActivePipelineRuns
@@ -713,26 +713,20 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return Register.model_validate(data)
 
-    async def submit_social_login(
-        self, provider: str, **kwargs: Any
-    ) -> SubmitSocialLogin:
+    async def logout(self, **kwargs: Any) -> Logout:
         query = gql("""
-            mutation SubmitSocialLogin($provider: String!) {
-              submit_social_login(provider: $provider) {
+            mutation Logout {
+              logout {
                 success
-                redirect_url
               }
             }
             """)
-        variables: dict[str, object] = {"provider": provider}
+        variables: dict[str, object] = {}
         response = await self.execute(
-            query=query,
-            operation_name="SubmitSocialLogin",
-            variables=variables,
-            **kwargs,
+            query=query, operation_name="Logout", variables=variables, **kwargs
         )
         data = self.get_data(response)
-        return SubmitSocialLogin.model_validate(data)
+        return Logout.model_validate(data)
 
     async def init_verification_flow(
         self,
