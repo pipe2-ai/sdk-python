@@ -35,6 +35,12 @@ class GetPipelineRunPipelineRunsByPkPipeline(BaseModel):
     input_schema: Any
     ui_schema: Any
     cancellable: bool
+    translations: list["GetPipelineRunPipelineRunsByPkPipelineTranslations"]
+
+
+class GetPipelineRunPipelineRunsByPkPipelineTranslations(BaseModel):
+    locale: str
+    name: Optional[str]
 
 
 class GetPipelineRunPipelineRunsByPkAssets(BaseModel):
@@ -53,3 +59,4 @@ class GetPipelineRunPipelineRunsByPkWorkflowExecution(BaseModel):
 
 GetPipelineRun.model_rebuild()
 GetPipelineRunPipelineRunsByPk.model_rebuild()
+GetPipelineRunPipelineRunsByPkPipeline.model_rebuild()

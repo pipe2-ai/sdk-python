@@ -66,6 +66,14 @@ class cursor_ordering(str, Enum):
     DESC = "DESC"
 
 
+class dispatch_blocks_select_column(str, Enum):
+    created_at = "created_at"
+    id = "id"
+    pipeline_slug = "pipeline_slug"
+    reason = "reason"
+    user_id = "user_id"
+
+
 class executions_visibility_select_column(str, Enum):
     close_time = "close_time"
     run_id = "run_id"
@@ -84,18 +92,29 @@ class locales_select_column(str, Enum):
     sort_order = "sort_order"
 
 
+class model_capabilities_select_column(str, Enum):
+    capability_slug = "capability_slug"
+    model_slug = "model_slug"
+
+
 class model_translations_select_column(str, Enum):
     description = "description"
     locale = "locale"
+    long_description = "long_description"
     model_slug = "model_slug"
     updated_at = "updated_at"
 
 
 class models_select_column(str, Enum):
+    aliases = "aliases"
     description = "description"
+    featured = "featured"
     is_active = "is_active"
     label = "label"
+    long_description = "long_description"
+    max_input_images = "max_input_images"
     provider = "provider"
+    public_name = "public_name"
     slug = "slug"
     sort_order = "sort_order"
 
@@ -117,6 +136,14 @@ class order_by(str, Enum):
     desc = "desc"
     desc_nulls_first = "desc_nulls_first"
     desc_nulls_last = "desc_nulls_last"
+
+
+class payment_providers_select_column(str, Enum):
+    enabled = "enabled"
+    label = "label"
+    locale = "locale"
+    slug = "slug"
+    sort_order = "sort_order"
 
 
 class personal_access_tokens_select_column(str, Enum):
@@ -242,6 +269,11 @@ class plans_select_column(str, Enum):
     name = "name"
     slug = "slug"
     sort_order = "sort_order"
+
+
+class providers_select_column(str, Enum):
+    label = "label"
+    slug = "slug"
 
 
 class subscriptions_select_column(str, Enum):

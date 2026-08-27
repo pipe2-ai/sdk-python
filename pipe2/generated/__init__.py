@@ -29,6 +29,10 @@ from .confirm_account_deletion import (
     ConfirmAccountDeletionConfirmAccountDeletion,
 )
 from .create_asset import CreateAsset, CreateAssetCreateAsset
+from .create_auth_handoff_code import (
+    CreateAuthHandoffCode,
+    CreateAuthHandoffCodeCreateAuthHandoffCode,
+)
 from .create_checkout_session import (
     CreateCheckoutSession,
     CreateCheckoutSessionCreateCheckoutSession,
@@ -47,12 +51,15 @@ from .enums import (
     credit_pack_versions_select_column,
     credit_packs_select_column,
     cursor_ordering,
+    dispatch_blocks_select_column,
     executions_visibility_select_column,
     locales_select_column,
+    model_capabilities_select_column,
     model_translations_select_column,
     models_select_column,
     notifications_select_column,
     order_by,
+    payment_providers_select_column,
     personal_access_tokens_select_column,
     pipeline_examples_select_column,
     pipeline_examples_translations_select_column,
@@ -63,6 +70,7 @@ from .enums import (
     plan_translations_select_column,
     plan_versions_select_column,
     plans_select_column,
+    providers_select_column,
     subscriptions_select_column,
 )
 from .estimate_pipeline_cost import (
@@ -75,6 +83,10 @@ from .exceptions import (
     GraphQLClientGraphQLMultiError,
     GraphQLClientHttpError,
     GraphQLClientInvalidResponseError,
+)
+from .exchange_auth_handoff_code import (
+    ExchangeAuthHandoffCode,
+    ExchangeAuthHandoffCodeExchangeAuthHandoffCode,
 )
 from .get_active_pipeline_runs import (
     GetActivePipelineRuns,
@@ -97,6 +109,7 @@ from .get_credit_packs import (
     GetCreditPacksCreditPacksVersions,
 )
 from .get_current_user import GetCurrentUser, GetCurrentUserCurrentUser
+from .get_dispatch_blocks import GetDispatchBlocks, GetDispatchBlocksDispatchBlocks
 from .get_my_affiliate import (
     GetMyAffiliate,
     GetMyAffiliateAffiliates,
@@ -124,11 +137,21 @@ from .get_notifications import (
     GetNotificationsUnread,
     GetNotificationsUnreadAggregate,
 )
+from .get_payment_providers import (
+    GetPaymentProviders,
+    GetPaymentProvidersPaymentProviders,
+)
+from .get_pipeline_by_slug import (
+    GetPipelineBySlug,
+    GetPipelineBySlugPipelines,
+    GetPipelineBySlugPipelinesTranslations,
+)
 from .get_pipeline_run import (
     GetPipelineRun,
     GetPipelineRunPipelineRunsByPk,
     GetPipelineRunPipelineRunsByPkAssets,
     GetPipelineRunPipelineRunsByPkPipeline,
+    GetPipelineRunPipelineRunsByPkPipelineTranslations,
     GetPipelineRunPipelineRunsByPkWorkflowExecution,
 )
 from .get_pipeline_runs import (
@@ -140,6 +163,7 @@ from .get_pipeline_runs import (
     GetPipelineRunsPipelineRunsAggregate,
     GetPipelineRunsPipelineRunsAggregateAggregate,
     GetPipelineRunsPipelineRunsPipeline,
+    GetPipelineRunsPipelineRunsPipelineTranslations,
     GetPipelineRunsPipelineRunsWorkflowExecution,
 )
 from .get_pipeline_runs_by_slug import (
@@ -249,6 +273,10 @@ from .input_types import (
     credit_packs_order_by,
     credit_packs_stream_cursor_input,
     credit_packs_stream_cursor_value_input,
+    dispatch_blocks_bool_exp,
+    dispatch_blocks_order_by,
+    dispatch_blocks_stream_cursor_input,
+    dispatch_blocks_stream_cursor_value_input,
     executions_visibility_bool_exp,
     executions_visibility_order_by,
     executions_visibility_stream_cursor_input,
@@ -259,6 +287,13 @@ from .input_types import (
     locales_order_by,
     locales_stream_cursor_input,
     locales_stream_cursor_value_input,
+    model_capabilities_aggregate_order_by,
+    model_capabilities_bool_exp,
+    model_capabilities_max_order_by,
+    model_capabilities_min_order_by,
+    model_capabilities_order_by,
+    model_capabilities_stream_cursor_input,
+    model_capabilities_stream_cursor_value_input,
     model_translations_aggregate_order_by,
     model_translations_bool_exp,
     model_translations_max_order_by,
@@ -279,6 +314,10 @@ from .input_types import (
     notifications_stream_cursor_value_input,
     notifications_updates,
     numeric_comparison_exp,
+    payment_providers_bool_exp,
+    payment_providers_order_by,
+    payment_providers_stream_cursor_input,
+    payment_providers_stream_cursor_value_input,
     personal_access_tokens_bool_exp,
     personal_access_tokens_order_by,
     personal_access_tokens_stream_cursor_input,
@@ -364,6 +403,10 @@ from .input_types import (
     plans_order_by,
     plans_stream_cursor_input,
     plans_stream_cursor_value_input,
+    providers_bool_exp,
+    providers_order_by,
+    providers_stream_cursor_input,
+    providers_stream_cursor_value_input,
     subscriptions_aggregate_order_by,
     subscriptions_bool_exp,
     subscriptions_max_order_by,
@@ -384,6 +427,14 @@ from .mark_all_notifications_read import (
 from .mark_notification_read import (
     MarkNotificationRead,
     MarkNotificationReadUpdateNotificationsByPk,
+)
+from .models import (
+    Models,
+    ModelsModels,
+    ModelsModelsCapabilities,
+    ModelsModelsPipelineModels,
+    ModelsModelsProviderInfo,
+    ModelsModelsTranslations,
 )
 from .pipeline_models import (
     PipelineModels,
@@ -417,6 +468,13 @@ from .revoke_personal_access_token import (
     RevokePersonalAccessTokenRevokePersonalAccessToken,
 )
 from .run_pipeline import RunPipeline, RunPipelineRunPipeline
+from .search_pipelines import (
+    SearchPipelines,
+    SearchPipelinesPipelines,
+    SearchPipelinesPipelinesAggregate,
+    SearchPipelinesPipelinesAggregateAggregate,
+    SearchPipelinesPipelinesTranslations,
+)
 from .set_run_share import SetRunShare, SetRunShareUpdatePipelineRunsByPk
 from .submit_verification_code import (
     SubmitVerificationCode,
@@ -462,6 +520,8 @@ __all__ = [
     "ConfirmAccountDeletionConfirmAccountDeletion",
     "CreateAsset",
     "CreateAssetCreateAsset",
+    "CreateAuthHandoffCode",
+    "CreateAuthHandoffCodeCreateAuthHandoffCode",
     "CreateCheckoutSession",
     "CreateCheckoutSessionCreateCheckoutSession",
     "CreatePersonalAccessToken",
@@ -472,6 +532,8 @@ __all__ = [
     "EnsureAffiliateEnsureAffiliate",
     "EstimatePipelineCost",
     "EstimatePipelineCostEstimatePipelineCost",
+    "ExchangeAuthHandoffCode",
+    "ExchangeAuthHandoffCodeExchangeAuthHandoffCode",
     "GetActivePipelineRuns",
     "GetActivePipelineRunsActiveCount",
     "GetActivePipelineRunsActiveCountAggregate",
@@ -491,6 +553,8 @@ __all__ = [
     "GetCreditPacksCreditPacksVersions",
     "GetCurrentUser",
     "GetCurrentUserCurrentUser",
+    "GetDispatchBlocks",
+    "GetDispatchBlocksDispatchBlocks",
     "GetMyAffiliate",
     "GetMyAffiliateAffiliates",
     "GetMyAffiliateAffiliatesCodes",
@@ -509,10 +573,16 @@ __all__ = [
     "GetNotificationsNotifications",
     "GetNotificationsUnread",
     "GetNotificationsUnreadAggregate",
+    "GetPaymentProviders",
+    "GetPaymentProvidersPaymentProviders",
+    "GetPipelineBySlug",
+    "GetPipelineBySlugPipelines",
+    "GetPipelineBySlugPipelinesTranslations",
     "GetPipelineRun",
     "GetPipelineRunPipelineRunsByPk",
     "GetPipelineRunPipelineRunsByPkAssets",
     "GetPipelineRunPipelineRunsByPkPipeline",
+    "GetPipelineRunPipelineRunsByPkPipelineTranslations",
     "GetPipelineRunPipelineRunsByPkWorkflowExecution",
     "GetPipelineRuns",
     "GetPipelineRunsBySlug",
@@ -529,6 +599,7 @@ __all__ = [
     "GetPipelineRunsPipelineRunsAggregate",
     "GetPipelineRunsPipelineRunsAggregateAggregate",
     "GetPipelineRunsPipelineRunsPipeline",
+    "GetPipelineRunsPipelineRunsPipelineTranslations",
     "GetPipelineRunsPipelineRunsWorkflowExecution",
     "GetPipelines",
     "GetPipelinesList",
@@ -566,6 +637,12 @@ __all__ = [
     "MarkAllNotificationsReadUpdateNotifications",
     "MarkNotificationRead",
     "MarkNotificationReadUpdateNotificationsByPk",
+    "Models",
+    "ModelsModels",
+    "ModelsModelsCapabilities",
+    "ModelsModelsPipelineModels",
+    "ModelsModelsProviderInfo",
+    "ModelsModelsTranslations",
     "Pipe2GraphQLClient",
     "PipelineModels",
     "PipelineModelsPipelineModels",
@@ -592,6 +669,11 @@ __all__ = [
     "RevokePersonalAccessTokenRevokePersonalAccessToken",
     "RunPipeline",
     "RunPipelineRunPipeline",
+    "SearchPipelines",
+    "SearchPipelinesPipelines",
+    "SearchPipelinesPipelinesAggregate",
+    "SearchPipelinesPipelinesAggregateAggregate",
+    "SearchPipelinesPipelinesTranslations",
     "SetRunShare",
     "SetRunShareUpdatePipelineRunsByPk",
     "String_array_comparison_exp",
@@ -679,6 +761,11 @@ __all__ = [
     "credit_packs_stream_cursor_input",
     "credit_packs_stream_cursor_value_input",
     "cursor_ordering",
+    "dispatch_blocks_bool_exp",
+    "dispatch_blocks_order_by",
+    "dispatch_blocks_select_column",
+    "dispatch_blocks_stream_cursor_input",
+    "dispatch_blocks_stream_cursor_value_input",
     "executions_visibility_bool_exp",
     "executions_visibility_order_by",
     "executions_visibility_select_column",
@@ -691,6 +778,14 @@ __all__ = [
     "locales_select_column",
     "locales_stream_cursor_input",
     "locales_stream_cursor_value_input",
+    "model_capabilities_aggregate_order_by",
+    "model_capabilities_bool_exp",
+    "model_capabilities_max_order_by",
+    "model_capabilities_min_order_by",
+    "model_capabilities_order_by",
+    "model_capabilities_select_column",
+    "model_capabilities_stream_cursor_input",
+    "model_capabilities_stream_cursor_value_input",
     "model_translations_aggregate_order_by",
     "model_translations_bool_exp",
     "model_translations_max_order_by",
@@ -715,6 +810,11 @@ __all__ = [
     "notifications_updates",
     "numeric_comparison_exp",
     "order_by",
+    "payment_providers_bool_exp",
+    "payment_providers_order_by",
+    "payment_providers_select_column",
+    "payment_providers_stream_cursor_input",
+    "payment_providers_stream_cursor_value_input",
     "personal_access_tokens_bool_exp",
     "personal_access_tokens_order_by",
     "personal_access_tokens_select_column",
@@ -810,6 +910,11 @@ __all__ = [
     "plans_select_column",
     "plans_stream_cursor_input",
     "plans_stream_cursor_value_input",
+    "providers_bool_exp",
+    "providers_order_by",
+    "providers_select_column",
+    "providers_stream_cursor_input",
+    "providers_stream_cursor_value_input",
     "subscriptions_aggregate_order_by",
     "subscriptions_bool_exp",
     "subscriptions_max_order_by",

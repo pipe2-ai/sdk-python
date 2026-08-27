@@ -34,6 +34,12 @@ class GetPipelineRunsPipelineRunsPipeline(BaseModel):
     input_schema: Any
     ui_schema: Any
     cancellable: bool
+    translations: list["GetPipelineRunsPipelineRunsPipelineTranslations"]
+
+
+class GetPipelineRunsPipelineRunsPipelineTranslations(BaseModel):
+    locale: str
+    name: Optional[str]
 
 
 class GetPipelineRunsPipelineRunsWorkflowExecution(BaseModel):
@@ -65,6 +71,7 @@ class GetPipelineRunsCompletedAggregateSum(BaseModel):
 
 GetPipelineRuns.model_rebuild()
 GetPipelineRunsPipelineRuns.model_rebuild()
+GetPipelineRunsPipelineRunsPipeline.model_rebuild()
 GetPipelineRunsPipelineRunsAggregate.model_rebuild()
 GetPipelineRunsCompleted.model_rebuild()
 GetPipelineRunsCompletedAggregate.model_rebuild()

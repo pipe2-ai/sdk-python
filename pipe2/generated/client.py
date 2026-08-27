@@ -17,11 +17,13 @@ from .change_password import ChangePassword
 from .complete_multipart_upload import CompleteMultipartUpload
 from .confirm_account_deletion import ConfirmAccountDeletion
 from .create_asset import CreateAsset
+from .create_auth_handoff_code import CreateAuthHandoffCode
 from .create_checkout_session import CreateCheckoutSession
 from .create_personal_access_token import CreatePersonalAccessToken
 from .delete_asset_action import DeleteAssetAction
 from .ensure_affiliate import EnsureAffiliate
 from .estimate_pipeline_cost import EstimatePipelineCost
+from .exchange_auth_handoff_code import ExchangeAuthHandoffCode
 from .get_active_pipeline_runs import GetActivePipelineRuns
 from .get_asset_thumbnail import GetAssetThumbnail
 from .get_asset_thumbnails_by_ids import GetAssetThumbnailsByIds
@@ -29,12 +31,15 @@ from .get_credit_balance import GetCreditBalance
 from .get_credit_history import GetCreditHistory
 from .get_credit_packs import GetCreditPacks
 from .get_current_user import GetCurrentUser
+from .get_dispatch_blocks import GetDispatchBlocks
 from .get_my_affiliate import GetMyAffiliate
 from .get_my_affiliate_codes import GetMyAffiliateCodes
 from .get_my_api_keys import GetMyApiKeys
 from .get_my_referrals import GetMyReferrals
 from .get_my_storage_usage import GetMyStorageUsage
 from .get_notifications import GetNotifications
+from .get_payment_providers import GetPaymentProviders
+from .get_pipeline_by_slug import GetPipelineBySlug
 from .get_pipeline_run import GetPipelineRun
 from .get_pipeline_runs import GetPipelineRuns
 from .get_pipeline_runs_by_slug import GetPipelineRunsBySlug
@@ -49,6 +54,7 @@ from .login import Login
 from .logout import Logout
 from .mark_all_notifications_read import MarkAllNotificationsRead
 from .mark_notification_read import MarkNotificationRead
+from .models import Models
 from .pipeline_models import PipelineModels
 from .pipeline_pricing import PipelinePricing
 from .register import Register
@@ -60,6 +66,7 @@ from .request_upload import RequestUpload
 from .reset_password import ResetPassword
 from .revoke_personal_access_token import RevokePersonalAccessToken
 from .run_pipeline import RunPipeline
+from .search_pipelines import SearchPipelines
 from .set_run_share import SetRunShare
 from .submit_verification_code import SubmitVerificationCode
 from .update_asset_tags import UpdateAssetTags
@@ -713,6 +720,62 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return Register.model_validate(data)
 
+    async def create_auth_handoff_code(
+        self, redirect_uri: str, code_challenge: str, **kwargs: Any
+    ) -> CreateAuthHandoffCode:
+        query = gql("""
+            mutation CreateAuthHandoffCode($redirect_uri: String!, $code_challenge: String!) {
+              create_auth_handoff_code(
+                redirect_uri: $redirect_uri
+                code_challenge: $code_challenge
+              ) {
+                code
+                expires_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "redirect_uri": redirect_uri,
+            "code_challenge": code_challenge,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="CreateAuthHandoffCode",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return CreateAuthHandoffCode.model_validate(data)
+
+    async def exchange_auth_handoff_code(
+        self, code: str, redirect_uri: str, code_verifier: str, **kwargs: Any
+    ) -> ExchangeAuthHandoffCode:
+        query = gql("""
+            mutation ExchangeAuthHandoffCode($code: String!, $redirect_uri: String!, $code_verifier: String!) {
+              exchange_auth_handoff_code(
+                code: $code
+                redirect_uri: $redirect_uri
+                code_verifier: $code_verifier
+              ) {
+                token
+                expires_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "code": code,
+            "redirect_uri": redirect_uri,
+            "code_verifier": code_verifier,
+        }
+        response = await self.execute(
+            query=query,
+            operation_name="ExchangeAuthHandoffCode",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return ExchangeAuthHandoffCode.model_validate(data)
+
     async def logout(self, **kwargs: Any) -> Logout:
         query = gql("""
             mutation Logout {
@@ -866,6 +929,45 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetCreditHistory.model_validate(data)
 
+    async def models(self, **kwargs: Any) -> Models:
+        query = gql("""
+            query Models {
+              models(order_by: {sort_order: asc, slug: asc}) {
+                slug
+                provider
+                label
+                public_name
+                aliases
+                provider_info {
+                  label
+                }
+                description
+                long_description
+                max_input_images
+                featured
+                sort_order
+                capabilities {
+                  capability_slug
+                }
+                pipeline_models(order_by: {sort_order: asc}) {
+                  pipeline_slug
+                  sort_order
+                }
+                translations {
+                  locale
+                  description
+                  long_description
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query, operation_name="Models", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return Models.model_validate(data)
+
     async def get_notifications(
         self, limit: int, offset: int, **kwargs: Any
     ) -> GetNotifications:
@@ -938,6 +1040,26 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return MarkAllNotificationsRead.model_validate(data)
 
+    async def get_payment_providers(self, **kwargs: Any) -> GetPaymentProviders:
+        query = gql("""
+            query GetPaymentProviders {
+              payment_providers(order_by: {sort_order: asc}) {
+                slug
+                enabled
+                locale
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query,
+            operation_name="GetPaymentProviders",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetPaymentProviders.model_validate(data)
+
     async def get_pipelines(self, **kwargs: Any) -> GetPipelines:
         query = gql("""
             query GetPipelines {
@@ -983,6 +1105,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   model {
                     slug
                     label
+                    public_name
                   }
                   translations {
                     locale
@@ -1039,6 +1162,97 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetPipelinesList.model_validate(data)
 
+    async def search_pipelines(
+        self,
+        limit: Union[Optional[int], UnsetType] = UNSET,
+        offset: Union[Optional[int], UnsetType] = UNSET,
+        search: Union[Optional[str], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> SearchPipelines:
+        query = gql("""
+            query SearchPipelines($limit: Int = 20, $offset: Int = 0, $search: String = "%%") {
+              pipelines(
+                where: {_and: [{is_active: {_eq: true}}, {_or: [{name: {_ilike: $search}}, {description: {_ilike: $search}}, {category: {_ilike: $search}}, {translations: {_or: [{name: {_ilike: $search}}, {description: {_ilike: $search}}]}}]}]}
+                order_by: [{sort_order: asc}, {slug: asc}]
+                limit: $limit
+                offset: $offset
+              ) {
+                id
+                slug
+                name
+                description
+                category
+                icon_url
+                preview_url
+                providers
+                models
+                tags
+                hints
+                cancellable
+                translations {
+                  locale
+                  name
+                  description
+                }
+              }
+              pipelines_aggregate(
+                where: {_and: [{is_active: {_eq: true}}, {_or: [{name: {_ilike: $search}}, {description: {_ilike: $search}}, {category: {_ilike: $search}}, {translations: {_or: [{name: {_ilike: $search}}, {description: {_ilike: $search}}]}}]}]}
+              ) {
+                aggregate {
+                  count
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "limit": limit,
+            "offset": offset,
+            "search": search,
+        }
+        response = await self.execute(
+            query=query, operation_name="SearchPipelines", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return SearchPipelines.model_validate(data)
+
+    async def get_pipeline_by_slug(self, slug: str, **kwargs: Any) -> GetPipelineBySlug:
+        query = gql("""
+            query GetPipelineBySlug($slug: String!) {
+              pipelines(where: {slug: {_eq: $slug}, is_active: {_eq: true}}, limit: 1) {
+                id
+                slug
+                name
+                description
+                category
+                icon_url
+                preview_url
+                providers
+                models
+                input_schema
+                ui_schema
+                output_schema
+                tags
+                hints
+                cancellable
+                translations {
+                  locale
+                  name
+                  description
+                  form_i18n
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"slug": slug}
+        response = await self.execute(
+            query=query,
+            operation_name="GetPipelineBySlug",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetPipelineBySlug.model_validate(data)
+
     async def estimate_pipeline_cost(
         self, pipeline_slug: str, input: Any, **kwargs: Any
     ) -> EstimatePipelineCost:
@@ -1079,8 +1293,10 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 model {
                   slug
                   label
+                  public_name
                   description
                   provider
+                  max_input_images
                   translations {
                     locale
                     description
@@ -1173,6 +1389,10 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   input_schema
                   ui_schema
                   cancellable
+                  translations {
+                    locale
+                    name
+                  }
                 }
                 assets {
                   id
@@ -1219,6 +1439,10 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   input_schema
                   ui_schema
                   cancellable
+                  translations {
+                    locale
+                    name
+                  }
                 }
                 status
                 input
@@ -1390,6 +1614,28 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         )
         data = self.get_data(response)
         return SetRunShare.model_validate(data)
+
+    async def get_dispatch_blocks(self, **kwargs: Any) -> GetDispatchBlocks:
+        query = gql("""
+            query GetDispatchBlocks {
+              dispatch_blocks {
+                id
+                pipeline_slug
+                user_id
+                reason
+                created_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query,
+            operation_name="GetDispatchBlocks",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetDispatchBlocks.model_validate(data)
 
     async def get_plans(self, **kwargs: Any) -> GetPlans:
         query = gql("""

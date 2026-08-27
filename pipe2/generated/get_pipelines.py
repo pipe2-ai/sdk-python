@@ -63,6 +63,7 @@ class GetPipelinesPipelinesExamples(BaseModel):
 class GetPipelinesPipelinesExamplesModel(BaseModel):
     slug: str
     label: str
+    public_name: Optional[str]
 
 
 class GetPipelinesPipelinesExamplesTranslations(BaseModel):

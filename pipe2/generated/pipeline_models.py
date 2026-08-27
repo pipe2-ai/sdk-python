@@ -19,8 +19,10 @@ class PipelineModelsPipelineModels(BaseModel):
 class PipelineModelsPipelineModelsModel(BaseModel):
     slug: str
     label: str
+    public_name: Optional[str]
     description: str
     provider: str
+    max_input_images: Optional[int]
     translations: list["PipelineModelsPipelineModelsModelTranslations"]
 
 
