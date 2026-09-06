@@ -279,6 +279,7 @@ class assets_bool_exp(BaseModel):
     thumbnail_url: Optional["String_comparison_exp"] = None
     type_: Optional["String_comparison_exp"] = Field(alias="type", default=None)
     url: Optional["String_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
 
 
 class assets_max_order_by(BaseModel):
@@ -326,6 +327,7 @@ class assets_order_by(BaseModel):
     thumbnail_url: Optional[order_by] = None
     type_: Optional[order_by] = Field(alias="type", default=None)
     url: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
 
 
 class assets_pk_columns_input(BaseModel):
@@ -435,38 +437,89 @@ class bigint_comparison_exp(BaseModel):
     nin: Optional[list[Any]] = Field(alias="_nin", default=None)
 
 
-class bpchar_comparison_exp(BaseModel):
-    """Boolean expression to compare columns of type "bpchar". All fields are combined with logical 'AND'."""
+class countries_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "countries". All fields are combined with a logical 'AND'."""
 
-    eq: Optional[Any] = Field(alias="_eq", default=None)
-    gt: Optional[Any] = Field(alias="_gt", default=None)
-    gte: Optional[Any] = Field(alias="_gte", default=None)
-    ilike: Optional[Any] = Field(alias="_ilike", default=None)
-    "does the column match the given case-insensitive pattern"
-    in_: Optional[list[Any]] = Field(alias="_in", default=None)
-    iregex: Optional[Any] = Field(alias="_iregex", default=None)
-    "does the column match the given POSIX regular expression, case insensitive"
-    is_null: Optional[bool] = Field(alias="_is_null", default=None)
-    like: Optional[Any] = Field(alias="_like", default=None)
-    "does the column match the given pattern"
-    lt: Optional[Any] = Field(alias="_lt", default=None)
-    lte: Optional[Any] = Field(alias="_lte", default=None)
-    neq: Optional[Any] = Field(alias="_neq", default=None)
-    nilike: Optional[Any] = Field(alias="_nilike", default=None)
-    "does the column NOT match the given case-insensitive pattern"
-    nin: Optional[list[Any]] = Field(alias="_nin", default=None)
-    niregex: Optional[Any] = Field(alias="_niregex", default=None)
-    "does the column NOT match the given POSIX regular expression, case insensitive"
-    nlike: Optional[Any] = Field(alias="_nlike", default=None)
-    "does the column NOT match the given pattern"
-    nregex: Optional[Any] = Field(alias="_nregex", default=None)
-    "does the column NOT match the given POSIX regular expression, case sensitive"
-    nsimilar: Optional[Any] = Field(alias="_nsimilar", default=None)
-    "does the column NOT match the given SQL regular expression"
-    regex: Optional[Any] = Field(alias="_regex", default=None)
-    "does the column match the given POSIX regular expression, case sensitive"
-    similar: Optional[Any] = Field(alias="_similar", default=None)
-    "does the column match the given SQL regular expression"
+    and_: Optional[list["countries_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["countries_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["countries_bool_exp"]] = Field(alias="_or", default=None)
+    code: Optional["String_comparison_exp"] = None
+    currency: Optional["String_comparison_exp"] = None
+    name: Optional["String_comparison_exp"] = None
+
+
+class countries_order_by(BaseModel):
+    """Ordering options when selecting data from "countries"."""
+
+    code: Optional[order_by] = None
+    currency: Optional[order_by] = None
+    name: Optional[order_by] = None
+
+
+class countries_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "countries"'''
+
+    initial_value: "countries_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class countries_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    code: Optional[str] = None
+    currency: Optional[str] = None
+    "ISO-4217 code of the country's current legal tender (CLDR currencyData). DISPLAY ONLY — every rail still settles in USD, so this never touches the amount charged."
+    name: Optional[str] = None
+
+
+class credit_grants_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "credit_grants". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["credit_grants_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["credit_grants_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["credit_grants_bool_exp"]] = Field(alias="_or", default=None)
+    created_at: Optional["timestamptz_comparison_exp"] = None
+    expires_at: Optional["timestamptz_comparison_exp"] = None
+    id: Optional["uuid_comparison_exp"] = None
+    original_mc: Optional["bigint_comparison_exp"] = None
+    remaining_mc: Optional["bigint_comparison_exp"] = None
+    source: Optional["String_comparison_exp"] = None
+    status: Optional["String_comparison_exp"] = None
+
+
+class credit_grants_order_by(BaseModel):
+    """Ordering options when selecting data from "credit_grants"."""
+
+    created_at: Optional[order_by] = None
+    expires_at: Optional[order_by] = None
+    id: Optional[order_by] = None
+    original_mc: Optional[order_by] = None
+    remaining_mc: Optional[order_by] = None
+    source: Optional[order_by] = None
+    status: Optional[order_by] = None
+
+
+class credit_grants_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "credit_grants"'''
+
+    initial_value: "credit_grants_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class credit_grants_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    created_at: Optional[Any] = None
+    expires_at: Optional[Any] = None
+    id: Optional[Any] = None
+    original_mc: Optional[Any] = None
+    remaining_mc: Optional[Any] = None
+    source: Optional[str] = None
+    status: Optional[str] = None
 
 
 class credit_pack_translations_aggregate_order_by(BaseModel):
@@ -751,6 +804,66 @@ class credit_packs_stream_cursor_value_input(BaseModel):
     sort_order: Optional[int] = None
 
 
+class crypto_payment_currencies_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "crypto_payment_currencies". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["crypto_payment_currencies_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["crypto_payment_currencies_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["crypto_payment_currencies_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    asset: Optional["String_comparison_exp"] = None
+    currency_id: Optional["String_comparison_exp"] = None
+    decimals: Optional["Int_comparison_exp"] = None
+    enabled: Optional["Boolean_comparison_exp"] = None
+    label: Optional["String_comparison_exp"] = None
+    min_usdt: Optional["numeric_comparison_exp"] = None
+    network: Optional["String_comparison_exp"] = None
+    provider: Optional["String_comparison_exp"] = None
+    sort_order: Optional["Int_comparison_exp"] = None
+
+
+class crypto_payment_currencies_order_by(BaseModel):
+    """Ordering options when selecting data from "crypto_payment_currencies"."""
+
+    asset: Optional[order_by] = None
+    currency_id: Optional[order_by] = None
+    decimals: Optional[order_by] = None
+    enabled: Optional[order_by] = None
+    label: Optional[order_by] = None
+    min_usdt: Optional[order_by] = None
+    network: Optional[order_by] = None
+    provider: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+
+
+class crypto_payment_currencies_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "crypto_payment_currencies"'''
+
+    initial_value: "crypto_payment_currencies_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class crypto_payment_currencies_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    asset: Optional[str] = None
+    currency_id: Optional[str] = None
+    decimals: Optional[int] = None
+    enabled: Optional[bool] = None
+    label: Optional[str] = None
+    min_usdt: Optional[Any] = None
+    network: Optional[str] = None
+    provider: Optional[str] = None
+    sort_order: Optional[int] = None
+
+
 class dispatch_blocks_bool_exp(BaseModel):
     """Boolean expression to filter rows from the table "dispatch_blocks". All fields are combined with a logical 'AND'."""
 
@@ -758,10 +871,12 @@ class dispatch_blocks_bool_exp(BaseModel):
     not_: Optional["dispatch_blocks_bool_exp"] = Field(alias="_not", default=None)
     or_: Optional[list["dispatch_blocks_bool_exp"]] = Field(alias="_or", default=None)
     created_at: Optional["timestamptz_comparison_exp"] = None
+    created_by_user: Optional["users_bool_exp"] = None
     id: Optional["uuid_comparison_exp"] = None
     pipeline: Optional["pipelines_bool_exp"] = None
     pipeline_slug: Optional["String_comparison_exp"] = None
     reason: Optional["String_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
     user_id: Optional["uuid_comparison_exp"] = None
 
 
@@ -769,10 +884,12 @@ class dispatch_blocks_order_by(BaseModel):
     """Ordering options when selecting data from "dispatch_blocks"."""
 
     created_at: Optional[order_by] = None
+    created_by_user: Optional["users_order_by"] = None
     id: Optional[order_by] = None
     pipeline: Optional["pipelines_order_by"] = None
     pipeline_slug: Optional[order_by] = None
     reason: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
     user_id: Optional[order_by] = None
 
 
@@ -795,56 +912,40 @@ class dispatch_blocks_stream_cursor_value_input(BaseModel):
     user_id: Optional[Any] = None
 
 
-class executions_visibility_bool_exp(BaseModel):
-    """Boolean expression to filter rows from the table "executions_visibility". All fields are combined with a logical 'AND'."""
+class fx_rates_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "fx_rates". All fields are combined with a logical 'AND'."""
 
-    and_: Optional[list["executions_visibility_bool_exp"]] = Field(
-        alias="_and", default=None
-    )
-    not_: Optional["executions_visibility_bool_exp"] = Field(alias="_not", default=None)
-    or_: Optional[list["executions_visibility_bool_exp"]] = Field(
-        alias="_or", default=None
-    )
-    close_time: Optional["timestamp_comparison_exp"] = None
-    run_id: Optional["bpchar_comparison_exp"] = None
-    start_time: Optional["timestamp_comparison_exp"] = None
-    status: Optional["Int_comparison_exp"] = None
-    task_queue: Optional["String_comparison_exp"] = None
-    workflow_id: Optional["String_comparison_exp"] = None
-    workflow_type_name: Optional["String_comparison_exp"] = None
+    and_: Optional[list["fx_rates_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["fx_rates_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["fx_rates_bool_exp"]] = Field(alias="_or", default=None)
+    currency: Optional["String_comparison_exp"] = None
+    rate: Optional["numeric_comparison_exp"] = None
+    updated_at: Optional["timestamptz_comparison_exp"] = None
 
 
-class executions_visibility_order_by(BaseModel):
-    """Ordering options when selecting data from "executions_visibility"."""
+class fx_rates_order_by(BaseModel):
+    """Ordering options when selecting data from "fx_rates"."""
 
-    close_time: Optional[order_by] = None
-    run_id: Optional[order_by] = None
-    start_time: Optional[order_by] = None
-    status: Optional[order_by] = None
-    task_queue: Optional[order_by] = None
-    workflow_id: Optional[order_by] = None
-    workflow_type_name: Optional[order_by] = None
+    currency: Optional[order_by] = None
+    rate: Optional[order_by] = None
+    updated_at: Optional[order_by] = None
 
 
-class executions_visibility_stream_cursor_input(BaseModel):
-    '''Streaming cursor of the table "executions_visibility"'''
+class fx_rates_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "fx_rates"'''
 
-    initial_value: "executions_visibility_stream_cursor_value_input"
+    initial_value: "fx_rates_stream_cursor_value_input"
     "Stream column input with initial value"
     ordering: Optional[cursor_ordering] = None
     "cursor ordering"
 
 
-class executions_visibility_stream_cursor_value_input(BaseModel):
+class fx_rates_stream_cursor_value_input(BaseModel):
     """Initial value of the column from where the streaming should start"""
 
-    close_time: Optional[Any] = None
-    run_id: Optional[Any] = None
-    start_time: Optional[Any] = None
-    status: Optional[int] = None
-    task_queue: Optional[str] = None
-    workflow_id: Optional[str] = None
-    workflow_type_name: Optional[str] = None
+    currency: Optional[str] = None
+    rate: Optional[Any] = None
+    updated_at: Optional[Any] = None
 
 
 class jsonb_cast_exp(BaseModel):
@@ -916,6 +1017,57 @@ class locales_stream_cursor_value_input(BaseModel):
     label: Optional[str] = None
     native_name: Optional[str] = None
     sort_order: Optional[int] = None
+
+
+class localized_product_prices_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "localized_product_prices". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["localized_product_prices_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["localized_product_prices_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["localized_product_prices_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    converted_price: Optional["numeric_comparison_exp"] = None
+    country: Optional["String_comparison_exp"] = None
+    currency: Optional["String_comparison_exp"] = None
+    product_kind: Optional["String_comparison_exp"] = None
+    product_slug: Optional["String_comparison_exp"] = None
+    usd_price_cents: Optional["Int_comparison_exp"] = None
+
+
+class localized_product_prices_order_by(BaseModel):
+    """Ordering options when selecting data from "localized_product_prices"."""
+
+    converted_price: Optional[order_by] = None
+    country: Optional[order_by] = None
+    currency: Optional[order_by] = None
+    product_kind: Optional[order_by] = None
+    product_slug: Optional[order_by] = None
+    usd_price_cents: Optional[order_by] = None
+
+
+class localized_product_prices_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "localized_product_prices"'''
+
+    initial_value: "localized_product_prices_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class localized_product_prices_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    converted_price: Optional[Any] = None
+    country: Optional[str] = None
+    currency: Optional[str] = None
+    product_kind: Optional[str] = None
+    product_slug: Optional[str] = None
+    usd_price_cents: Optional[int] = None
 
 
 class model_capabilities_aggregate_order_by(BaseModel):
@@ -1065,14 +1217,17 @@ class models_bool_exp(BaseModel):
     capabilities: Optional["model_capabilities_bool_exp"] = None
     description: Optional["String_comparison_exp"] = None
     featured: Optional["Boolean_comparison_exp"] = None
+    icon_url: Optional["String_comparison_exp"] = None
     is_active: Optional["Boolean_comparison_exp"] = None
     label: Optional["String_comparison_exp"] = None
     long_description: Optional["String_comparison_exp"] = None
     max_input_images: Optional["Int_comparison_exp"] = None
     pipeline_models: Optional["pipeline_models_bool_exp"] = None
+    poster_url: Optional["String_comparison_exp"] = None
     provider: Optional["String_comparison_exp"] = None
     provider_info: Optional["providers_bool_exp"] = None
     public_name: Optional["String_comparison_exp"] = None
+    quality_score: Optional["smallint_comparison_exp"] = None
     slug: Optional["String_comparison_exp"] = None
     sort_order: Optional["Int_comparison_exp"] = None
     translations: Optional["model_translations_bool_exp"] = None
@@ -1085,14 +1240,17 @@ class models_order_by(BaseModel):
     capabilities_aggregate: Optional["model_capabilities_aggregate_order_by"] = None
     description: Optional[order_by] = None
     featured: Optional[order_by] = None
+    icon_url: Optional[order_by] = None
     is_active: Optional[order_by] = None
     label: Optional[order_by] = None
     long_description: Optional[order_by] = None
     max_input_images: Optional[order_by] = None
     pipeline_models_aggregate: Optional["pipeline_models_aggregate_order_by"] = None
+    poster_url: Optional[order_by] = None
     provider: Optional[order_by] = None
     provider_info: Optional["providers_order_by"] = None
     public_name: Optional[order_by] = None
+    quality_score: Optional[order_by] = None
     slug: Optional[order_by] = None
     sort_order: Optional[order_by] = None
     translations_aggregate: Optional["model_translations_aggregate_order_by"] = None
@@ -1113,12 +1271,16 @@ class models_stream_cursor_value_input(BaseModel):
     aliases: Optional[list[str]] = None
     description: Optional[str] = None
     featured: Optional[bool] = None
+    icon_url: Optional[str] = None
     is_active: Optional[bool] = None
     label: Optional[str] = None
     long_description: Optional[str] = None
     max_input_images: Optional[int] = None
+    poster_url: Optional[str] = None
     provider: Optional[str] = None
     public_name: Optional[str] = None
+    quality_score: Optional[Any] = None
+    "Pipe2 editorial output-quality score. NULL means not yet assessed."
     slug: Optional[str] = None
     sort_order: Optional[int] = None
 
@@ -1209,6 +1371,63 @@ class numeric_comparison_exp(BaseModel):
     nin: Optional[list[Any]] = Field(alias="_nin", default=None)
 
 
+class payment_provider_resolved_row_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "payment_provider_resolved_row". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["payment_provider_resolved_row_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["payment_provider_resolved_row_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["payment_provider_resolved_row_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    description: Optional["String_comparison_exp"] = None
+    fee_bps: Optional["Int_comparison_exp"] = None
+    kind: Optional["String_comparison_exp"] = None
+    label: Optional["String_comparison_exp"] = None
+    price_source: Optional["String_comparison_exp"] = None
+    slug: Optional["String_comparison_exp"] = None
+    sort_order: Optional["Int_comparison_exp"] = None
+    supports_recurring: Optional["Boolean_comparison_exp"] = None
+
+
+class payment_provider_resolved_row_order_by(BaseModel):
+    """Ordering options when selecting data from "payment_provider_resolved_row"."""
+
+    description: Optional[order_by] = None
+    fee_bps: Optional[order_by] = None
+    kind: Optional[order_by] = None
+    label: Optional[order_by] = None
+    price_source: Optional[order_by] = None
+    slug: Optional[order_by] = None
+    sort_order: Optional[order_by] = None
+    supports_recurring: Optional[order_by] = None
+
+
+class payment_provider_resolved_row_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "payment_provider_resolved_row"'''
+
+    initial_value: "payment_provider_resolved_row_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class payment_provider_resolved_row_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    description: Optional[str] = None
+    fee_bps: Optional[int] = None
+    kind: Optional[str] = None
+    label: Optional[str] = None
+    price_source: Optional[str] = None
+    slug: Optional[str] = None
+    sort_order: Optional[int] = None
+    supports_recurring: Optional[bool] = None
+
+
 class payment_providers_bool_exp(BaseModel):
     """Boolean expression to filter rows from the table "payment_providers". All fields are combined with a logical 'AND'."""
 
@@ -1217,21 +1436,29 @@ class payment_providers_bool_exp(BaseModel):
     )
     not_: Optional["payment_providers_bool_exp"] = Field(alias="_not", default=None)
     or_: Optional[list["payment_providers_bool_exp"]] = Field(alias="_or", default=None)
+    description: Optional["String_comparison_exp"] = None
     enabled: Optional["Boolean_comparison_exp"] = None
+    fee_bps: Optional["Int_comparison_exp"] = None
+    kind: Optional["String_comparison_exp"] = None
     label: Optional["String_comparison_exp"] = None
-    locale: Optional["String_comparison_exp"] = None
+    price_source: Optional["String_comparison_exp"] = None
     slug: Optional["String_comparison_exp"] = None
     sort_order: Optional["Int_comparison_exp"] = None
+    supports_recurring: Optional["Boolean_comparison_exp"] = None
 
 
 class payment_providers_order_by(BaseModel):
     """Ordering options when selecting data from "payment_providers"."""
 
+    description: Optional[order_by] = None
     enabled: Optional[order_by] = None
+    fee_bps: Optional[order_by] = None
+    kind: Optional[order_by] = None
     label: Optional[order_by] = None
-    locale: Optional[order_by] = None
+    price_source: Optional[order_by] = None
     slug: Optional[order_by] = None
     sort_order: Optional[order_by] = None
+    supports_recurring: Optional[order_by] = None
 
 
 class payment_providers_stream_cursor_input(BaseModel):
@@ -1246,11 +1473,17 @@ class payment_providers_stream_cursor_input(BaseModel):
 class payment_providers_stream_cursor_value_input(BaseModel):
     """Initial value of the column from where the streaming should start"""
 
+    description: Optional[str] = None
     enabled: Optional[bool] = None
+    fee_bps: Optional[int] = None
+    "Signed basis points applied to the base price: -300 = 3% discount, 1500 = 15% surcharge."
+    kind: Optional[str] = None
     label: Optional[str] = None
-    locale: Optional[str] = None
+    price_source: Optional[str] = None
     slug: Optional[str] = None
     sort_order: Optional[int] = None
+    supports_recurring: Optional[bool] = None
+    "Provider integration can automatically renew subscriptions. One-time packs do not require this capability."
 
 
 class personal_access_tokens_bool_exp(BaseModel):
@@ -1272,6 +1505,7 @@ class personal_access_tokens_bool_exp(BaseModel):
     name: Optional["String_comparison_exp"] = None
     revoked_at: Optional["timestamptz_comparison_exp"] = None
     scopes: Optional["String_array_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
 
 
 class personal_access_tokens_order_by(BaseModel):
@@ -1284,6 +1518,7 @@ class personal_access_tokens_order_by(BaseModel):
     name: Optional[order_by] = None
     revoked_at: Optional[order_by] = None
     scopes: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
 
 
 class personal_access_tokens_stream_cursor_input(BaseModel):
@@ -1591,6 +1826,7 @@ class pipeline_models_aggregate_order_by(BaseModel):
 class pipeline_models_avg_order_by(BaseModel):
     '''order by avg() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
@@ -1600,6 +1836,8 @@ class pipeline_models_bool_exp(BaseModel):
     and_: Optional[list["pipeline_models_bool_exp"]] = Field(alias="_and", default=None)
     not_: Optional["pipeline_models_bool_exp"] = Field(alias="_not", default=None)
     or_: Optional[list["pipeline_models_bool_exp"]] = Field(alias="_or", default=None)
+    auto_route_order: Optional["Int_comparison_exp"] = None
+    input_schema: Optional["jsonb_comparison_exp"] = None
     model: Optional["models_bool_exp"] = None
     model_slug: Optional["String_comparison_exp"] = None
     pipeline: Optional["pipelines_bool_exp"] = None
@@ -1610,6 +1848,7 @@ class pipeline_models_bool_exp(BaseModel):
 class pipeline_models_max_order_by(BaseModel):
     '''order by max() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     model_slug: Optional[order_by] = None
     pipeline_slug: Optional[order_by] = None
     sort_order: Optional[order_by] = None
@@ -1618,6 +1857,7 @@ class pipeline_models_max_order_by(BaseModel):
 class pipeline_models_min_order_by(BaseModel):
     '''order by min() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     model_slug: Optional[order_by] = None
     pipeline_slug: Optional[order_by] = None
     sort_order: Optional[order_by] = None
@@ -1626,6 +1866,8 @@ class pipeline_models_min_order_by(BaseModel):
 class pipeline_models_order_by(BaseModel):
     """Ordering options when selecting data from "pipeline_models"."""
 
+    auto_route_order: Optional[order_by] = None
+    input_schema: Optional[order_by] = None
     model: Optional["models_order_by"] = None
     model_slug: Optional[order_by] = None
     pipeline: Optional["pipelines_order_by"] = None
@@ -1636,18 +1878,21 @@ class pipeline_models_order_by(BaseModel):
 class pipeline_models_stddev_order_by(BaseModel):
     '''order by stddev() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
 class pipeline_models_stddev_pop_order_by(BaseModel):
     '''order by stddev_pop() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
 class pipeline_models_stddev_samp_order_by(BaseModel):
     '''order by stddev_samp() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
@@ -1663,6 +1908,8 @@ class pipeline_models_stream_cursor_input(BaseModel):
 class pipeline_models_stream_cursor_value_input(BaseModel):
     """Initial value of the column from where the streaming should start"""
 
+    auto_route_order: Optional[int] = None
+    input_schema: Optional[Any] = None
     model_slug: Optional[str] = None
     pipeline_slug: Optional[str] = None
     sort_order: Optional[int] = None
@@ -1671,24 +1918,28 @@ class pipeline_models_stream_cursor_value_input(BaseModel):
 class pipeline_models_sum_order_by(BaseModel):
     '''order by sum() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
 class pipeline_models_var_pop_order_by(BaseModel):
     '''order by var_pop() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
 class pipeline_models_var_samp_order_by(BaseModel):
     '''order by var_samp() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
 class pipeline_models_variance_order_by(BaseModel):
     '''order by variance() on columns of table "pipeline_models"'''
 
+    auto_route_order: Optional[order_by] = None
     sort_order: Optional[order_by] = None
 
 
@@ -1714,6 +1965,7 @@ class pipeline_runs_bool_exp(BaseModel):
     started_at: Optional["timestamptz_comparison_exp"] = None
     status: Optional["String_comparison_exp"] = None
     temporal_workflow_id: Optional["String_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
 
 
 class pipeline_runs_order_by(BaseModel):
@@ -1734,6 +1986,7 @@ class pipeline_runs_order_by(BaseModel):
     started_at: Optional[order_by] = None
     status: Optional[order_by] = None
     temporal_workflow_id: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
 
 
 class pipeline_runs_pk_columns_input(BaseModel):
@@ -2315,6 +2568,84 @@ class providers_stream_cursor_value_input(BaseModel):
     slug: Optional[str] = None
 
 
+class resolve_payment_providers_args(BaseModel):
+    p_country: Optional[str] = None
+    p_locale: Optional[str] = None
+    p_platform: Optional[str] = None
+
+
+class smallint_comparison_exp(BaseModel):
+    """Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'."""
+
+    eq: Optional[Any] = Field(alias="_eq", default=None)
+    gt: Optional[Any] = Field(alias="_gt", default=None)
+    gte: Optional[Any] = Field(alias="_gte", default=None)
+    in_: Optional[list[Any]] = Field(alias="_in", default=None)
+    is_null: Optional[bool] = Field(alias="_is_null", default=None)
+    lt: Optional[Any] = Field(alias="_lt", default=None)
+    lte: Optional[Any] = Field(alias="_lte", default=None)
+    neq: Optional[Any] = Field(alias="_neq", default=None)
+    nin: Optional[list[Any]] = Field(alias="_nin", default=None)
+
+
+class subscription_plan_changes_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "subscription_plan_changes". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["subscription_plan_changes_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["subscription_plan_changes_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["subscription_plan_changes_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    charge_cents: Optional["Int_comparison_exp"] = None
+    created_at: Optional["timestamptz_comparison_exp"] = None
+    effective_at: Optional["timestamptz_comparison_exp"] = None
+    from_plan_version: Optional["plan_versions_bool_exp"] = None
+    grant_mc: Optional["bigint_comparison_exp"] = None
+    id: Optional["uuid_comparison_exp"] = None
+    kind: Optional["String_comparison_exp"] = None
+    status: Optional["String_comparison_exp"] = None
+    to_plan_version: Optional["plan_versions_bool_exp"] = None
+
+
+class subscription_plan_changes_order_by(BaseModel):
+    """Ordering options when selecting data from "subscription_plan_changes"."""
+
+    charge_cents: Optional[order_by] = None
+    created_at: Optional[order_by] = None
+    effective_at: Optional[order_by] = None
+    from_plan_version: Optional["plan_versions_order_by"] = None
+    grant_mc: Optional[order_by] = None
+    id: Optional[order_by] = None
+    kind: Optional[order_by] = None
+    status: Optional[order_by] = None
+    to_plan_version: Optional["plan_versions_order_by"] = None
+
+
+class subscription_plan_changes_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "subscription_plan_changes"'''
+
+    initial_value: "subscription_plan_changes_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class subscription_plan_changes_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    charge_cents: Optional[int] = None
+    created_at: Optional[Any] = None
+    effective_at: Optional[Any] = None
+    grant_mc: Optional[Any] = None
+    id: Optional[Any] = None
+    kind: Optional[str] = None
+    status: Optional[str] = None
+
+
 class subscriptions_aggregate_order_by(BaseModel):
     '''order by aggregate values of table "subscriptions"'''
 
@@ -2332,6 +2663,7 @@ class subscriptions_bool_exp(BaseModel):
     cancel_at_period_end: Optional["Boolean_comparison_exp"] = None
     created_at: Optional["timestamptz_comparison_exp"] = None
     id: Optional["uuid_comparison_exp"] = None
+    metadata: Optional["jsonb_comparison_exp"] = None
     period_end: Optional["timestamptz_comparison_exp"] = None
     period_start: Optional["timestamptz_comparison_exp"] = None
     plan: Optional["plans_bool_exp"] = None
@@ -2339,6 +2671,7 @@ class subscriptions_bool_exp(BaseModel):
     plan_version: Optional["plan_versions_bool_exp"] = None
     plan_version_id: Optional["uuid_comparison_exp"] = None
     status: Optional["String_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
 
 
 class subscriptions_max_order_by(BaseModel):
@@ -2371,6 +2704,7 @@ class subscriptions_order_by(BaseModel):
     cancel_at_period_end: Optional[order_by] = None
     created_at: Optional[order_by] = None
     id: Optional[order_by] = None
+    metadata: Optional[order_by] = None
     period_end: Optional[order_by] = None
     period_start: Optional[order_by] = None
     plan: Optional["plans_order_by"] = None
@@ -2378,6 +2712,7 @@ class subscriptions_order_by(BaseModel):
     plan_version: Optional["plan_versions_order_by"] = None
     plan_version_id: Optional[order_by] = None
     status: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
 
 
 class subscriptions_stream_cursor_input(BaseModel):
@@ -2395,25 +2730,12 @@ class subscriptions_stream_cursor_value_input(BaseModel):
     cancel_at_period_end: Optional[bool] = None
     created_at: Optional[Any] = None
     id: Optional[Any] = None
+    metadata: Optional[Any] = None
     period_end: Optional[Any] = None
     period_start: Optional[Any] = None
     plan_id: Optional[Any] = None
     plan_version_id: Optional[Any] = None
     status: Optional[str] = None
-
-
-class timestamp_comparison_exp(BaseModel):
-    """Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'."""
-
-    eq: Optional[Any] = Field(alias="_eq", default=None)
-    gt: Optional[Any] = Field(alias="_gt", default=None)
-    gte: Optional[Any] = Field(alias="_gte", default=None)
-    in_: Optional[list[Any]] = Field(alias="_in", default=None)
-    is_null: Optional[bool] = Field(alias="_is_null", default=None)
-    lt: Optional[Any] = Field(alias="_lt", default=None)
-    lte: Optional[Any] = Field(alias="_lte", default=None)
-    neq: Optional[Any] = Field(alias="_neq", default=None)
-    nin: Optional[list[Any]] = Field(alias="_nin", default=None)
 
 
 class timestamptz_comparison_exp(BaseModel):
@@ -2428,6 +2750,114 @@ class timestamptz_comparison_exp(BaseModel):
     lte: Optional[Any] = Field(alias="_lte", default=None)
     neq: Optional[Any] = Field(alias="_neq", default=None)
     nin: Optional[list[Any]] = Field(alias="_nin", default=None)
+
+
+class user_credit_balance_breakdown_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "user_credit_balance_breakdown". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["user_credit_balance_breakdown_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["user_credit_balance_breakdown_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["user_credit_balance_breakdown_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    expiring_mc: Optional["bigint_comparison_exp"] = None
+    next_expiry_at: Optional["timestamptz_comparison_exp"] = None
+    retry_mc: Optional["bigint_comparison_exp"] = None
+    subscription_mc: Optional["bigint_comparison_exp"] = None
+    user_id: Optional["uuid_comparison_exp"] = None
+
+
+class user_credit_balance_breakdown_order_by(BaseModel):
+    """Ordering options when selecting data from "user_credit_balance_breakdown"."""
+
+    expiring_mc: Optional[order_by] = None
+    next_expiry_at: Optional[order_by] = None
+    retry_mc: Optional[order_by] = None
+    subscription_mc: Optional[order_by] = None
+    user_id: Optional[order_by] = None
+
+
+class user_credit_balance_breakdown_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "user_credit_balance_breakdown"'''
+
+    initial_value: "user_credit_balance_breakdown_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class user_credit_balance_breakdown_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    expiring_mc: Optional[Any] = None
+    next_expiry_at: Optional[Any] = None
+    retry_mc: Optional[Any] = None
+    subscription_mc: Optional[Any] = None
+    user_id: Optional[Any] = None
+
+
+class user_subscription_credits_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "user_subscription_credits". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["user_subscription_credits_bool_exp"]] = Field(
+        alias="_and", default=None
+    )
+    not_: Optional["user_subscription_credits_bool_exp"] = Field(
+        alias="_not", default=None
+    )
+    or_: Optional[list["user_subscription_credits_bool_exp"]] = Field(
+        alias="_or", default=None
+    )
+    expires_at: Optional["timestamptz_comparison_exp"] = None
+    remaining_mc: Optional["bigint_comparison_exp"] = None
+    updated_at: Optional["timestamptz_comparison_exp"] = None
+    user_id: Optional["uuid_comparison_exp"] = None
+
+
+class user_subscription_credits_order_by(BaseModel):
+    """Ordering options when selecting data from "user_subscription_credits"."""
+
+    expires_at: Optional[order_by] = None
+    remaining_mc: Optional[order_by] = None
+    updated_at: Optional[order_by] = None
+    user_id: Optional[order_by] = None
+
+
+class user_subscription_credits_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "user_subscription_credits"'''
+
+    initial_value: "user_subscription_credits_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class user_subscription_credits_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    expires_at: Optional[Any] = None
+    remaining_mc: Optional[Any] = None
+    updated_at: Optional[Any] = None
+    user_id: Optional[Any] = None
+
+
+class users_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["users_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["users_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["users_bool_exp"]] = Field(alias="_or", default=None)
+    updated_at: Optional["timestamptz_comparison_exp"] = None
+
+
+class users_order_by(BaseModel):
+    """Ordering options when selecting data from "users"."""
+
+    updated_at: Optional[order_by] = None
 
 
 class uuid_comparison_exp(BaseModel):
@@ -2459,6 +2889,10 @@ assets_bool_exp.model_rebuild()
 assets_order_by.model_rebuild()
 assets_stream_cursor_input.model_rebuild()
 assets_updates.model_rebuild()
+countries_bool_exp.model_rebuild()
+countries_stream_cursor_input.model_rebuild()
+credit_grants_bool_exp.model_rebuild()
+credit_grants_stream_cursor_input.model_rebuild()
 credit_pack_translations_aggregate_order_by.model_rebuild()
 credit_pack_translations_bool_exp.model_rebuild()
 credit_pack_translations_stream_cursor_input.model_rebuild()
@@ -2469,15 +2903,19 @@ credit_pack_versions_stream_cursor_input.model_rebuild()
 credit_packs_bool_exp.model_rebuild()
 credit_packs_order_by.model_rebuild()
 credit_packs_stream_cursor_input.model_rebuild()
+crypto_payment_currencies_bool_exp.model_rebuild()
+crypto_payment_currencies_stream_cursor_input.model_rebuild()
 dispatch_blocks_bool_exp.model_rebuild()
 dispatch_blocks_order_by.model_rebuild()
 dispatch_blocks_stream_cursor_input.model_rebuild()
-executions_visibility_bool_exp.model_rebuild()
-executions_visibility_stream_cursor_input.model_rebuild()
+fx_rates_bool_exp.model_rebuild()
+fx_rates_stream_cursor_input.model_rebuild()
 jsonb_cast_exp.model_rebuild()
 jsonb_comparison_exp.model_rebuild()
 locales_bool_exp.model_rebuild()
 locales_stream_cursor_input.model_rebuild()
+localized_product_prices_bool_exp.model_rebuild()
+localized_product_prices_stream_cursor_input.model_rebuild()
 model_capabilities_aggregate_order_by.model_rebuild()
 model_capabilities_bool_exp.model_rebuild()
 model_capabilities_order_by.model_rebuild()
@@ -2492,9 +2930,12 @@ models_stream_cursor_input.model_rebuild()
 notifications_bool_exp.model_rebuild()
 notifications_stream_cursor_input.model_rebuild()
 notifications_updates.model_rebuild()
+payment_provider_resolved_row_bool_exp.model_rebuild()
+payment_provider_resolved_row_stream_cursor_input.model_rebuild()
 payment_providers_bool_exp.model_rebuild()
 payment_providers_stream_cursor_input.model_rebuild()
 personal_access_tokens_bool_exp.model_rebuild()
+personal_access_tokens_order_by.model_rebuild()
 personal_access_tokens_stream_cursor_input.model_rebuild()
 pipeline_examples_aggregate_order_by.model_rebuild()
 pipeline_examples_bool_exp.model_rebuild()
@@ -2531,7 +2972,15 @@ plans_order_by.model_rebuild()
 plans_stream_cursor_input.model_rebuild()
 providers_bool_exp.model_rebuild()
 providers_stream_cursor_input.model_rebuild()
+subscription_plan_changes_bool_exp.model_rebuild()
+subscription_plan_changes_order_by.model_rebuild()
+subscription_plan_changes_stream_cursor_input.model_rebuild()
 subscriptions_aggregate_order_by.model_rebuild()
 subscriptions_bool_exp.model_rebuild()
 subscriptions_order_by.model_rebuild()
 subscriptions_stream_cursor_input.model_rebuild()
+user_credit_balance_breakdown_bool_exp.model_rebuild()
+user_credit_balance_breakdown_stream_cursor_input.model_rebuild()
+user_subscription_credits_bool_exp.model_rebuild()
+user_subscription_credits_stream_cursor_input.model_rebuild()
+users_bool_exp.model_rebuild()

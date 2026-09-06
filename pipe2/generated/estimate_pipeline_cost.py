@@ -19,7 +19,7 @@ class EstimatePipelineCostEstimatePipelineCost(BaseModel):
     routed_reason_code: Optional[str]
     routed_reason_params: Optional[Any]
     incompatible_models: Optional[Any]
-    engine_caps: Optional[Any]
+    model_input_schema: Optional[Any]
 
 
 EstimatePipelineCost.model_rebuild()

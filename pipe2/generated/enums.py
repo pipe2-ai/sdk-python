@@ -35,6 +35,22 @@ class assets_select_column(str, Enum):
     url = "url"
 
 
+class countries_select_column(str, Enum):
+    code = "code"
+    currency = "currency"
+    name = "name"
+
+
+class credit_grants_select_column(str, Enum):
+    created_at = "created_at"
+    expires_at = "expires_at"
+    id = "id"
+    original_mc = "original_mc"
+    remaining_mc = "remaining_mc"
+    source = "source"
+    status = "status"
+
+
 class credit_pack_translations_select_column(str, Enum):
     credit_pack_id = "credit_pack_id"
     locale = "locale"
@@ -61,6 +77,18 @@ class credit_packs_select_column(str, Enum):
     sort_order = "sort_order"
 
 
+class crypto_payment_currencies_select_column(str, Enum):
+    asset = "asset"
+    currency_id = "currency_id"
+    decimals = "decimals"
+    enabled = "enabled"
+    label = "label"
+    min_usdt = "min_usdt"
+    network = "network"
+    provider = "provider"
+    sort_order = "sort_order"
+
+
 class cursor_ordering(str, Enum):
     ASC = "ASC"
     DESC = "DESC"
@@ -74,14 +102,10 @@ class dispatch_blocks_select_column(str, Enum):
     user_id = "user_id"
 
 
-class executions_visibility_select_column(str, Enum):
-    close_time = "close_time"
-    run_id = "run_id"
-    start_time = "start_time"
-    status = "status"
-    task_queue = "task_queue"
-    workflow_id = "workflow_id"
-    workflow_type_name = "workflow_type_name"
+class fx_rates_select_column(str, Enum):
+    currency = "currency"
+    rate = "rate"
+    updated_at = "updated_at"
 
 
 class locales_select_column(str, Enum):
@@ -90,6 +114,15 @@ class locales_select_column(str, Enum):
     label = "label"
     native_name = "native_name"
     sort_order = "sort_order"
+
+
+class localized_product_prices_select_column(str, Enum):
+    converted_price = "converted_price"
+    country = "country"
+    currency = "currency"
+    product_kind = "product_kind"
+    product_slug = "product_slug"
+    usd_price_cents = "usd_price_cents"
 
 
 class model_capabilities_select_column(str, Enum):
@@ -109,12 +142,15 @@ class models_select_column(str, Enum):
     aliases = "aliases"
     description = "description"
     featured = "featured"
+    icon_url = "icon_url"
     is_active = "is_active"
     label = "label"
     long_description = "long_description"
     max_input_images = "max_input_images"
+    poster_url = "poster_url"
     provider = "provider"
     public_name = "public_name"
+    quality_score = "quality_score"
     slug = "slug"
     sort_order = "sort_order"
 
@@ -138,12 +174,27 @@ class order_by(str, Enum):
     desc_nulls_last = "desc_nulls_last"
 
 
-class payment_providers_select_column(str, Enum):
-    enabled = "enabled"
+class payment_provider_resolved_row_select_column(str, Enum):
+    description = "description"
+    fee_bps = "fee_bps"
+    kind = "kind"
     label = "label"
-    locale = "locale"
+    price_source = "price_source"
     slug = "slug"
     sort_order = "sort_order"
+    supports_recurring = "supports_recurring"
+
+
+class payment_providers_select_column(str, Enum):
+    description = "description"
+    enabled = "enabled"
+    fee_bps = "fee_bps"
+    kind = "kind"
+    label = "label"
+    price_source = "price_source"
+    slug = "slug"
+    sort_order = "sort_order"
+    supports_recurring = "supports_recurring"
 
 
 class personal_access_tokens_select_column(str, Enum):
@@ -184,6 +235,8 @@ class pipeline_examples_translations_select_column(str, Enum):
 
 
 class pipeline_models_select_column(str, Enum):
+    auto_route_order = "auto_route_order"
+    input_schema = "input_schema"
     model_slug = "model_slug"
     pipeline_slug = "pipeline_slug"
     sort_order = "sort_order"
@@ -276,12 +329,42 @@ class providers_select_column(str, Enum):
     slug = "slug"
 
 
+class subscription_plan_changes_select_column(str, Enum):
+    charge_cents = "charge_cents"
+    created_at = "created_at"
+    effective_at = "effective_at"
+    grant_mc = "grant_mc"
+    id = "id"
+    kind = "kind"
+    status = "status"
+
+
 class subscriptions_select_column(str, Enum):
     cancel_at_period_end = "cancel_at_period_end"
     created_at = "created_at"
     id = "id"
+    metadata = "metadata"
     period_end = "period_end"
     period_start = "period_start"
     plan_id = "plan_id"
     plan_version_id = "plan_version_id"
     status = "status"
+
+
+class user_credit_balance_breakdown_select_column(str, Enum):
+    expiring_mc = "expiring_mc"
+    next_expiry_at = "next_expiry_at"
+    retry_mc = "retry_mc"
+    subscription_mc = "subscription_mc"
+    user_id = "user_id"
+
+
+class user_subscription_credits_select_column(str, Enum):
+    expires_at = "expires_at"
+    remaining_mc = "remaining_mc"
+    updated_at = "updated_at"
+    user_id = "user_id"
+
+
+class users_select_column(str, Enum):
+    updated_at = "updated_at"

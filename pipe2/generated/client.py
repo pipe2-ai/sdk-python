@@ -11,6 +11,7 @@ from .base_model import UNSET, UnsetType
 from .cancel_account_deletion import CancelAccountDeletion
 from .cancel_pipeline_run import CancelPipelineRun
 from .cancel_subscription import CancelSubscription
+from .cancel_subscription_plan_change import CancelSubscriptionPlanChange
 from .change_avatar import ChangeAvatar
 from .change_name import ChangeName
 from .change_password import ChangePassword
@@ -18,7 +19,7 @@ from .complete_multipart_upload import CompleteMultipartUpload
 from .confirm_account_deletion import ConfirmAccountDeletion
 from .create_asset import CreateAsset
 from .create_auth_handoff_code import CreateAuthHandoffCode
-from .create_checkout_session import CreateCheckoutSession
+from .create_payment import CreatePayment
 from .create_personal_access_token import CreatePersonalAccessToken
 from .delete_asset_action import DeleteAssetAction
 from .ensure_affiliate import EnsureAffiliate
@@ -27,18 +28,23 @@ from .exchange_auth_handoff_code import ExchangeAuthHandoffCode
 from .get_active_pipeline_runs import GetActivePipelineRuns
 from .get_asset_thumbnail import GetAssetThumbnail
 from .get_asset_thumbnails_by_ids import GetAssetThumbnailsByIds
+from .get_checkout_providers import GetCheckoutProviders
 from .get_credit_balance import GetCreditBalance
 from .get_credit_history import GetCreditHistory
 from .get_credit_packs import GetCreditPacks
+from .get_crypto_payment_currencies import GetCryptoPaymentCurrencies
 from .get_current_user import GetCurrentUser
 from .get_dispatch_blocks import GetDispatchBlocks
+from .get_localized_prices import GetLocalizedPrices
 from .get_my_affiliate import GetMyAffiliate
 from .get_my_affiliate_codes import GetMyAffiliateCodes
 from .get_my_api_keys import GetMyApiKeys
 from .get_my_referrals import GetMyReferrals
 from .get_my_storage_usage import GetMyStorageUsage
 from .get_notifications import GetNotifications
-from .get_payment_providers import GetPaymentProviders
+from .get_payment import GetPayment
+from .get_payments import GetPayments
+from .get_pending_subscription_plan_change import GetPendingSubscriptionPlanChange
 from .get_pipeline_by_slug import GetPipelineBySlug
 from .get_pipeline_run import GetPipelineRun
 from .get_pipeline_runs import GetPipelineRuns
@@ -48,6 +54,7 @@ from .get_pipelines_list import GetPipelinesList
 from .get_plans import GetPlans
 from .get_subscription import GetSubscription
 from .get_user_assets import GetUserAssets
+from .get_user_subscription_credits import GetUserSubscriptionCredits
 from .init_verification_flow import InitVerificationFlow
 from .input_types import assets_bool_exp, multipart_part_input, pipeline_runs_bool_exp
 from .login import Login
@@ -66,11 +73,13 @@ from .request_upload import RequestUpload
 from .reset_password import ResetPassword
 from .revoke_personal_access_token import RevokePersonalAccessToken
 from .run_pipeline import RunPipeline
+from .schedule_subscription_plan_change import ScheduleSubscriptionPlanChange
 from .search_pipelines import SearchPipelines
 from .set_run_share import SetRunShare
 from .submit_verification_code import SubmitVerificationCode
 from .update_asset_tags import UpdateAssetTags
 from .watch_active_pipeline_runs import WatchActivePipelineRuns
+from .watch_billing_updates import WatchBillingUpdates
 from .watch_notifications import WatchNotifications
 from .watch_pipeline_run import WatchPipelineRun
 
@@ -929,6 +938,188 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetCreditHistory.model_validate(data)
 
+    async def create_payment(
+        self,
+        provider: str,
+        attempt_id: Any,
+        credit_pack_slug: Union[Optional[str], UnsetType] = UNSET,
+        plan_slug: Union[Optional[str], UnsetType] = UNSET,
+        currency_id: Union[Optional[str], UnsetType] = UNSET,
+        country: Union[Optional[str], UnsetType] = UNSET,
+        recurring_consent: Union[Optional[bool], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> CreatePayment:
+        query = gql("""
+            mutation CreatePayment($provider: String!, $attempt_id: uuid!, $credit_pack_slug: String, $plan_slug: String, $currency_id: String, $country: String, $recurring_consent: Boolean) {
+              create_payment(
+                provider: $provider
+                attempt_id: $attempt_id
+                credit_pack_slug: $credit_pack_slug
+                plan_slug: $plan_slug
+                currency_id: $currency_id
+                country: $country
+                recurring_consent: $recurring_consent
+              ) {
+                success
+                payment_id
+                deposit_address
+                expected_usdt
+                credits
+                network
+                currency_id
+                expires_at
+                provider
+                status
+                asset
+                amount
+                remaining_amount
+                payment_uri
+                qr_code_data_url
+                top_up_payment_uri
+                top_up_qr_code_data_url
+                required_confirmations
+                confirmations
+                amount_paid_usdt
+                granted_at
+                tx_hash
+                currency
+                detail
+              }
+            }
+            """)
+        variables: dict[str, object] = {
+            "provider": provider,
+            "attempt_id": attempt_id,
+            "credit_pack_slug": credit_pack_slug,
+            "plan_slug": plan_slug,
+            "currency_id": currency_id,
+            "country": country,
+            "recurring_consent": recurring_consent,
+        }
+        response = await self.execute(
+            query=query, operation_name="CreatePayment", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return CreatePayment.model_validate(data)
+
+    async def get_user_subscription_credits(
+        self, **kwargs: Any
+    ) -> GetUserSubscriptionCredits:
+        query = gql("""
+            query GetUserSubscriptionCredits {
+              user_credit_balance_breakdown {
+                subscription_mc
+                retry_mc
+                expiring_mc
+                next_expiry_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query,
+            operation_name="GetUserSubscriptionCredits",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetUserSubscriptionCredits.model_validate(data)
+
+    async def get_crypto_payment_currencies(
+        self, provider: str, **kwargs: Any
+    ) -> GetCryptoPaymentCurrencies:
+        query = gql("""
+            query GetCryptoPaymentCurrencies($provider: String!) {
+              crypto_payment_currencies(
+                where: {enabled: {_eq: true}, provider: {_eq: $provider}}
+                order_by: {sort_order: asc}
+              ) {
+                currency_id
+                network
+                asset
+                label
+                decimals
+                min_usdt
+              }
+            }
+            """)
+        variables: dict[str, object] = {"provider": provider}
+        response = await self.execute(
+            query=query,
+            operation_name="GetCryptoPaymentCurrencies",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetCryptoPaymentCurrencies.model_validate(data)
+
+    async def get_payment(self, provider: str, id: Any, **kwargs: Any) -> GetPayment:
+        query = gql("""
+            query GetPayment($provider: String!, $id: uuid!) {
+              get_payment_status(provider: $provider, payment_id: $id) {
+                success
+                payment_id
+                provider
+                status
+                credits
+                expected_usdt
+                amount_paid_usdt
+                deposit_address
+                currency_id
+                network
+                expires_at
+                granted_at
+                tx_hash
+                asset
+                amount
+                remaining_amount
+                payment_uri
+                qr_code_data_url
+                top_up_payment_uri
+                top_up_qr_code_data_url
+                required_confirmations
+                confirmations
+                currency
+                detail
+              }
+            }
+            """)
+        variables: dict[str, object] = {"provider": provider, "id": id}
+        response = await self.execute(
+            query=query, operation_name="GetPayment", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return GetPayment.model_validate(data)
+
+    async def get_payments(
+        self,
+        limit: Union[Optional[int], UnsetType] = UNSET,
+        offset: Union[Optional[int], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> GetPayments:
+        query = gql("""
+            query GetPayments($limit: Int = 50, $offset: Int = 0) {
+              payments(limit: $limit, offset: $offset) {
+                payment_id
+                provider
+                kind
+                status
+                credits
+                amount
+                currency
+                expires_at
+                granted_at
+                created_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {"limit": limit, "offset": offset}
+        response = await self.execute(
+            query=query, operation_name="GetPayments", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return GetPayments.model_validate(data)
+
     async def models(self, **kwargs: Any) -> Models:
         query = gql("""
             query Models {
@@ -943,8 +1134,11 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 }
                 description
                 long_description
+                icon_url
+                poster_url
                 max_input_images
                 featured
+                quality_score
                 sort_order
                 capabilities {
                   capability_slug
@@ -952,6 +1146,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 pipeline_models(order_by: {sort_order: asc}) {
                   pipeline_slug
                   sort_order
+                  input_schema
+                  auto_route_order
                 }
                 translations {
                   locale
@@ -1040,25 +1236,38 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return MarkAllNotificationsRead.model_validate(data)
 
-    async def get_payment_providers(self, **kwargs: Any) -> GetPaymentProviders:
+    async def get_checkout_providers(
+        self, country: str, platform: str, locale: str, **kwargs: Any
+    ) -> GetCheckoutProviders:
         query = gql("""
-            query GetPaymentProviders {
-              payment_providers(order_by: {sort_order: asc}) {
+            query GetCheckoutProviders($country: String!, $platform: String!, $locale: String!) {
+              resolve_payment_providers(
+                args: {p_country: $country, p_platform: $platform, p_locale: $locale}
+              ) {
                 slug
-                enabled
-                locale
+                kind
+                label
+                description
+                fee_bps
+                price_source
+                sort_order
+                supports_recurring
               }
             }
             """)
-        variables: dict[str, object] = {}
+        variables: dict[str, object] = {
+            "country": country,
+            "platform": platform,
+            "locale": locale,
+        }
         response = await self.execute(
             query=query,
-            operation_name="GetPaymentProviders",
+            operation_name="GetCheckoutProviders",
             variables=variables,
             **kwargs,
         )
         data = self.get_data(response)
-        return GetPaymentProviders.model_validate(data)
+        return GetCheckoutProviders.model_validate(data)
 
     async def get_pipelines(self, **kwargs: Any) -> GetPipelines:
         query = gql("""
@@ -1267,7 +1476,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 routed_reason_code
                 routed_reason_params
                 incompatible_models
-                engine_caps
+                model_input_schema
               }
             }
             """)
@@ -1290,13 +1499,14 @@ class Pipe2GraphQLClient(AsyncBaseClient):
               ) {
                 model_slug
                 sort_order
+                input_schema
+                auto_route_order
                 model {
                   slug
                   label
                   public_name
                   description
                   provider
-                  max_input_images
                   translations {
                     locale
                     description
@@ -1699,10 +1909,40 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetCreditPacks.model_validate(data)
 
+    async def get_localized_prices(
+        self, country: str, **kwargs: Any
+    ) -> GetLocalizedPrices:
+        query = gql("""
+            query GetLocalizedPrices($country: String!) {
+              localized_product_prices(where: {country: {_eq: $country}}) {
+                product_kind
+                product_slug
+                country
+                currency
+                usd_price_cents
+                converted_price
+              }
+              countries(order_by: {name: asc}) {
+                code
+                name
+                currency
+              }
+            }
+            """)
+        variables: dict[str, object] = {"country": country}
+        response = await self.execute(
+            query=query,
+            operation_name="GetLocalizedPrices",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return GetLocalizedPrices.model_validate(data)
+
     async def get_subscription(self, **kwargs: Any) -> GetSubscription:
         query = gql("""
             query GetSubscription {
-              subscriptions {
+              subscriptions(where: {status: {_in: ["active", "past_due"]}}, limit: 1) {
                 id
                 plan_id
                 plan_version_id
@@ -1710,6 +1950,7 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 period_start
                 period_end
                 cancel_at_period_end
+                metadata
                 plan {
                   slug
                   name
@@ -1733,35 +1974,80 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         data = self.get_data(response)
         return GetSubscription.model_validate(data)
 
-    async def create_checkout_session(
-        self,
-        whop_plan_id: str,
-        affiliate_code: Union[Optional[str], UnsetType] = UNSET,
-        **kwargs: Any,
-    ) -> CreateCheckoutSession:
+    async def get_pending_subscription_plan_change(
+        self, **kwargs: Any
+    ) -> GetPendingSubscriptionPlanChange:
         query = gql("""
-            mutation CreateCheckoutSession($whop_plan_id: String!, $affiliate_code: String) {
-              create_checkout_session(
-                whop_plan_id: $whop_plan_id
-                affiliate_code: $affiliate_code
-              ) {
-                success
-                url
+            query GetPendingSubscriptionPlanChange {
+              subscription_plan_changes(where: {status: {_eq: "pending"}}, limit: 1) {
+                id
+                kind
+                status
+                effective_at
+                to_plan_version {
+                  id
+                  plan {
+                    slug
+                    name
+                    sort_order
+                  }
+                }
               }
             }
             """)
-        variables: dict[str, object] = {
-            "whop_plan_id": whop_plan_id,
-            "affiliate_code": affiliate_code,
-        }
+        variables: dict[str, object] = {}
         response = await self.execute(
             query=query,
-            operation_name="CreateCheckoutSession",
+            operation_name="GetPendingSubscriptionPlanChange",
             variables=variables,
             **kwargs,
         )
         data = self.get_data(response)
-        return CreateCheckoutSession.model_validate(data)
+        return GetPendingSubscriptionPlanChange.model_validate(data)
+
+    async def schedule_subscription_plan_change(
+        self, plan_slug: str, **kwargs: Any
+    ) -> ScheduleSubscriptionPlanChange:
+        query = gql("""
+            mutation ScheduleSubscriptionPlanChange($plan_slug: String!) {
+              schedule_subscription_plan_change(plan_slug: $plan_slug) {
+                success
+                change_id
+                status
+                effective_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {"plan_slug": plan_slug}
+        response = await self.execute(
+            query=query,
+            operation_name="ScheduleSubscriptionPlanChange",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return ScheduleSubscriptionPlanChange.model_validate(data)
+
+    async def cancel_subscription_plan_change(
+        self, **kwargs: Any
+    ) -> CancelSubscriptionPlanChange:
+        query = gql("""
+            mutation CancelSubscriptionPlanChange {
+              cancel_subscription_plan_change {
+                success
+                cancelled
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        response = await self.execute(
+            query=query,
+            operation_name="CancelSubscriptionPlanChange",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return CancelSubscriptionPlanChange.model_validate(data)
 
     async def watch_pipeline_run(
         self, run_id: Any, **kwargs: Any
@@ -1856,6 +2142,25 @@ class Pipe2GraphQLClient(AsyncBaseClient):
             **kwargs,
         ):
             yield WatchNotifications.model_validate(data)
+
+    async def watch_billing_updates(
+        self, **kwargs: Any
+    ) -> AsyncIterator[WatchBillingUpdates]:
+        query = gql("""
+            subscription WatchBillingUpdates {
+              users(limit: 1) {
+                updated_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {}
+        async for data in self.execute_ws(
+            query=query,
+            operation_name="WatchBillingUpdates",
+            variables=variables,
+            **kwargs,
+        ):
+            yield WatchBillingUpdates.model_validate(data)
 
     async def get_my_api_keys(self, **kwargs: Any) -> GetMyApiKeys:
         query = gql("""
