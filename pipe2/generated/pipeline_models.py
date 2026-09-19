@@ -24,7 +24,13 @@ class PipelineModelsPipelineModelsModel(BaseModel):
     public_name: Optional[str]
     description: str
     provider: str
+    provider_info: "PipelineModelsPipelineModelsModelProviderInfo"
+    icon_url: Optional[str]
     translations: list["PipelineModelsPipelineModelsModelTranslations"]
+
+
+class PipelineModelsPipelineModelsModelProviderInfo(BaseModel):
+    label: Optional[str]
 
 
 class PipelineModelsPipelineModelsModelTranslations(BaseModel):

@@ -227,6 +227,92 @@ class affiliates_stream_cursor_value_input(BaseModel):
     whop_affiliate_id: Optional[str] = None
 
 
+class asset_imports_bool_exp(BaseModel):
+    """Boolean expression to filter rows from the table "asset_imports". All fields are combined with a logical 'AND'."""
+
+    and_: Optional[list["asset_imports_bool_exp"]] = Field(alias="_and", default=None)
+    not_: Optional["asset_imports_bool_exp"] = Field(alias="_not", default=None)
+    or_: Optional[list["asset_imports_bool_exp"]] = Field(alias="_or", default=None)
+    asset: Optional["assets_bool_exp"] = None
+    asset_id: Optional["uuid_comparison_exp"] = None
+    bytes_: Optional["bigint_comparison_exp"] = Field(alias="bytes", default=None)
+    code: Optional["String_comparison_exp"] = None
+    dismissed_at: Optional["timestamptz_comparison_exp"] = None
+    error: Optional["String_comparison_exp"] = None
+    finished_at: Optional["timestamptz_comparison_exp"] = None
+    id: Optional["uuid_comparison_exp"] = None
+    phase: Optional["String_comparison_exp"] = None
+    source_url: Optional["String_comparison_exp"] = None
+    started_at: Optional["timestamptz_comparison_exp"] = None
+    status: Optional["String_comparison_exp"] = None
+    total_bytes: Optional["bigint_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
+
+
+class asset_imports_order_by(BaseModel):
+    """Ordering options when selecting data from "asset_imports"."""
+
+    asset: Optional["assets_order_by"] = None
+    asset_id: Optional[order_by] = None
+    bytes_: Optional[order_by] = Field(alias="bytes", default=None)
+    code: Optional[order_by] = None
+    dismissed_at: Optional[order_by] = None
+    error: Optional[order_by] = None
+    finished_at: Optional[order_by] = None
+    id: Optional[order_by] = None
+    phase: Optional[order_by] = None
+    source_url: Optional[order_by] = None
+    started_at: Optional[order_by] = None
+    status: Optional[order_by] = None
+    total_bytes: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
+
+
+class asset_imports_pk_columns_input(BaseModel):
+    """primary key columns input for table: asset_imports"""
+
+    id: Any
+
+
+class asset_imports_set_input(BaseModel):
+    '''input type for updating data in table "asset_imports"'''
+
+    dismissed_at: Optional[Any] = None
+
+
+class asset_imports_stream_cursor_input(BaseModel):
+    '''Streaming cursor of the table "asset_imports"'''
+
+    initial_value: "asset_imports_stream_cursor_value_input"
+    "Stream column input with initial value"
+    ordering: Optional[cursor_ordering] = None
+    "cursor ordering"
+
+
+class asset_imports_stream_cursor_value_input(BaseModel):
+    """Initial value of the column from where the streaming should start"""
+
+    asset_id: Optional[Any] = None
+    bytes_: Optional[Any] = Field(alias="bytes", default=None)
+    code: Optional[str] = None
+    dismissed_at: Optional[Any] = None
+    error: Optional[str] = None
+    finished_at: Optional[Any] = None
+    id: Optional[Any] = None
+    phase: Optional[str] = None
+    source_url: Optional[str] = None
+    started_at: Optional[Any] = None
+    status: Optional[str] = None
+    total_bytes: Optional[Any] = None
+
+
+class asset_imports_updates(BaseModel):
+    set_: Optional["asset_imports_set_input"] = Field(alias="_set", default=None)
+    "sets the columns of the filtered rows to the given values"
+    where: "asset_imports_bool_exp"
+    "filter the rows which have to be updated"
+
+
 class assets_aggregate_bool_exp(BaseModel):
     count: Optional["assets_aggregate_bool_exp_count"] = None
 
@@ -1499,26 +1585,38 @@ class personal_access_tokens_bool_exp(BaseModel):
         alias="_or", default=None
     )
     created_at: Optional["timestamptz_comparison_exp"] = None
+    credit_limit_mc: Optional["bigint_comparison_exp"] = None
     expires_at: Optional["timestamptz_comparison_exp"] = None
     id: Optional["uuid_comparison_exp"] = None
     last_used_at: Optional["timestamptz_comparison_exp"] = None
+    lifetime_used_mc: Optional["bigint_comparison_exp"] = None
     name: Optional["String_comparison_exp"] = None
+    reset_period: Optional["String_comparison_exp"] = None
     revoked_at: Optional["timestamptz_comparison_exp"] = None
     scopes: Optional["String_array_comparison_exp"] = None
     user: Optional["users_bool_exp"] = None
+    window_reserved_mc: Optional["bigint_comparison_exp"] = None
+    window_start: Optional["timestamptz_comparison_exp"] = None
+    window_used_mc: Optional["bigint_comparison_exp"] = None
 
 
 class personal_access_tokens_order_by(BaseModel):
     """Ordering options when selecting data from "personal_access_tokens"."""
 
     created_at: Optional[order_by] = None
+    credit_limit_mc: Optional[order_by] = None
     expires_at: Optional[order_by] = None
     id: Optional[order_by] = None
     last_used_at: Optional[order_by] = None
+    lifetime_used_mc: Optional[order_by] = None
     name: Optional[order_by] = None
+    reset_period: Optional[order_by] = None
     revoked_at: Optional[order_by] = None
     scopes: Optional[order_by] = None
     user: Optional["users_order_by"] = None
+    window_reserved_mc: Optional[order_by] = None
+    window_start: Optional[order_by] = None
+    window_used_mc: Optional[order_by] = None
 
 
 class personal_access_tokens_stream_cursor_input(BaseModel):
@@ -1534,12 +1632,18 @@ class personal_access_tokens_stream_cursor_value_input(BaseModel):
     """Initial value of the column from where the streaming should start"""
 
     created_at: Optional[Any] = None
+    credit_limit_mc: Optional[Any] = None
     expires_at: Optional[Any] = None
     id: Optional[Any] = None
     last_used_at: Optional[Any] = None
+    lifetime_used_mc: Optional[Any] = None
     name: Optional[str] = None
+    reset_period: Optional[str] = None
     revoked_at: Optional[Any] = None
     scopes: Optional[list[str]] = None
+    window_reserved_mc: Optional[Any] = None
+    window_start: Optional[Any] = None
+    window_used_mc: Optional[Any] = None
 
 
 class pipeline_examples_aggregate_order_by(BaseModel):
@@ -1949,6 +2053,7 @@ class pipeline_runs_bool_exp(BaseModel):
     and_: Optional[list["pipeline_runs_bool_exp"]] = Field(alias="_and", default=None)
     not_: Optional["pipeline_runs_bool_exp"] = Field(alias="_not", default=None)
     or_: Optional[list["pipeline_runs_bool_exp"]] = Field(alias="_or", default=None)
+    agent_actual_credits_mc: Optional["Int_comparison_exp"] = None
     assets: Optional["assets_bool_exp"] = None
     assets_aggregate: Optional["assets_aggregate_bool_exp"] = None
     completed_at: Optional["timestamptz_comparison_exp"] = None
@@ -1958,6 +2063,7 @@ class pipeline_runs_bool_exp(BaseModel):
     id: Optional["uuid_comparison_exp"] = None
     input: Optional["jsonb_comparison_exp"] = None
     output: Optional["jsonb_comparison_exp"] = None
+    parent_run_id: Optional["uuid_comparison_exp"] = None
     pipeline: Optional["pipelines_bool_exp"] = None
     pipeline_id: Optional["uuid_comparison_exp"] = None
     share_token: Optional["uuid_comparison_exp"] = None
@@ -1971,6 +2077,7 @@ class pipeline_runs_bool_exp(BaseModel):
 class pipeline_runs_order_by(BaseModel):
     """Ordering options when selecting data from "pipeline_runs"."""
 
+    agent_actual_credits_mc: Optional[order_by] = None
     assets_aggregate: Optional["assets_aggregate_order_by"] = None
     completed_at: Optional[order_by] = None
     created_at: Optional[order_by] = None
@@ -1979,6 +2086,7 @@ class pipeline_runs_order_by(BaseModel):
     id: Optional[order_by] = None
     input: Optional[order_by] = None
     output: Optional[order_by] = None
+    parent_run_id: Optional[order_by] = None
     pipeline: Optional["pipelines_order_by"] = None
     pipeline_id: Optional[order_by] = None
     share_token: Optional[order_by] = None
@@ -2014,6 +2122,7 @@ class pipeline_runs_stream_cursor_input(BaseModel):
 class pipeline_runs_stream_cursor_value_input(BaseModel):
     """Initial value of the column from where the streaming should start"""
 
+    agent_actual_credits_mc: Optional[int] = None
     completed_at: Optional[Any] = None
     created_at: Optional[Any] = None
     credits_charged: Optional[int] = None
@@ -2021,6 +2130,7 @@ class pipeline_runs_stream_cursor_value_input(BaseModel):
     id: Optional[Any] = None
     input: Optional[Any] = None
     output: Optional[Any] = None
+    parent_run_id: Optional[Any] = None
     pipeline_id: Optional[Any] = None
     share_token: Optional[Any] = None
     share_watermark: Optional[bool] = None
@@ -2882,6 +2992,10 @@ affiliate_codes_updates.model_rebuild()
 affiliates_bool_exp.model_rebuild()
 affiliates_order_by.model_rebuild()
 affiliates_stream_cursor_input.model_rebuild()
+asset_imports_bool_exp.model_rebuild()
+asset_imports_order_by.model_rebuild()
+asset_imports_stream_cursor_input.model_rebuild()
+asset_imports_updates.model_rebuild()
 assets_aggregate_bool_exp.model_rebuild()
 assets_aggregate_bool_exp_count.model_rebuild()
 assets_aggregate_order_by.model_rebuild()

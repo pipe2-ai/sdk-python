@@ -6,9 +6,11 @@ from typing import Any, Optional, Union
 
 from .abort_multipart_upload import AbortMultipartUpload
 from .add_affiliate_code import AddAffiliateCode
+from .asset_import_status import AssetImportStatus
 from .async_base_client import AsyncBaseClient
 from .base_model import UNSET, UnsetType
 from .cancel_account_deletion import CancelAccountDeletion
+from .cancel_media_import import CancelMediaImport
 from .cancel_pipeline_run import CancelPipelineRun
 from .cancel_subscription import CancelSubscription
 from .cancel_subscription_plan_change import CancelSubscriptionPlanChange
@@ -22,6 +24,7 @@ from .create_auth_handoff_code import CreateAuthHandoffCode
 from .create_payment import CreatePayment
 from .create_personal_access_token import CreatePersonalAccessToken
 from .delete_asset_action import DeleteAssetAction
+from .dismiss_asset_import import DismissAssetImport
 from .ensure_affiliate import EnsureAffiliate
 from .estimate_pipeline_cost import EstimatePipelineCost
 from .exchange_auth_handoff_code import ExchangeAuthHandoffCode
@@ -55,6 +58,7 @@ from .get_plans import GetPlans
 from .get_subscription import GetSubscription
 from .get_user_assets import GetUserAssets
 from .get_user_subscription_credits import GetUserSubscriptionCredits
+from .import_media_url import ImportMediaURL
 from .init_verification_flow import InitVerificationFlow
 from .input_types import assets_bool_exp, multipart_part_input, pipeline_runs_bool_exp
 from .login import Login
@@ -78,10 +82,13 @@ from .search_pipelines import SearchPipelines
 from .set_run_share import SetRunShare
 from .submit_verification_code import SubmitVerificationCode
 from .update_asset_tags import UpdateAssetTags
+from .user_asset_imports import UserAssetImports
 from .watch_active_pipeline_runs import WatchActivePipelineRuns
 from .watch_billing_updates import WatchBillingUpdates
 from .watch_notifications import WatchNotifications
 from .watch_pipeline_run import WatchPipelineRun
+from .watch_pipeline_run_count_by_slug import WatchPipelineRunCountBySlug
+from .watch_pipeline_runs_by_slug import WatchPipelineRunsBySlug
 
 
 def gql(q: str) -> str:
@@ -629,6 +636,129 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         )
         data = self.get_data(response)
         return CreateAsset.model_validate(data)
+
+    async def import_media_url(
+        self,
+        url: str,
+        tags: Union[Optional[list[str]], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> ImportMediaURL:
+        query = gql("""
+            mutation ImportMediaURL($url: String!, $tags: [String!] = []) {
+              import_media_url(url: $url, tags: $tags) {
+                import_id
+                status
+              }
+            }
+            """)
+        variables: dict[str, object] = {"url": url, "tags": tags}
+        response = await self.execute(
+            query=query, operation_name="ImportMediaURL", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return ImportMediaURL.model_validate(data)
+
+    async def cancel_media_import(
+        self, import_id: str, **kwargs: Any
+    ) -> CancelMediaImport:
+        query = gql("""
+            mutation CancelMediaImport($importId: String!) {
+              cancel_media_import(import_id: $importId) {
+                import_id
+                status
+              }
+            }
+            """)
+        variables: dict[str, object] = {"importId": import_id}
+        response = await self.execute(
+            query=query,
+            operation_name="CancelMediaImport",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return CancelMediaImport.model_validate(data)
+
+    async def dismiss_asset_import(self, id: Any, **kwargs: Any) -> DismissAssetImport:
+        query = gql("""
+            mutation DismissAssetImport($id: uuid!) {
+              update_asset_imports(where: {id: {_eq: $id}}, _set: {dismissed_at: "now()"}) {
+                affected_rows
+              }
+            }
+            """)
+        variables: dict[str, object] = {"id": id}
+        response = await self.execute(
+            query=query,
+            operation_name="DismissAssetImport",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return DismissAssetImport.model_validate(data)
+
+    async def asset_import_status(self, id: Any, **kwargs: Any) -> AssetImportStatus:
+        query = gql("""
+            query AssetImportStatus($id: uuid!) {
+              asset_imports_by_pk(id: $id) {
+                id
+                status
+                phase
+                bytes
+                total_bytes
+                code
+                error
+                asset_id
+                finished_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {"id": id}
+        response = await self.execute(
+            query=query,
+            operation_name="AssetImportStatus",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return AssetImportStatus.model_validate(data)
+
+    async def user_asset_imports(
+        self,
+        failed_since: Any,
+        limit: Union[Optional[int], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> UserAssetImports:
+        query = gql("""
+            query UserAssetImports($limit: Int = 10, $failedSince: timestamptz!) {
+              asset_imports(
+                where: {_or: [{finished_at: {_is_null: true}}, {status: {_eq: "failed"}, finished_at: {_gte: $failedSince}, dismissed_at: {_is_null: true}}]}
+                order_by: {started_at: desc}
+                limit: $limit
+              ) {
+                id
+                source_url
+                status
+                phase
+                bytes
+                total_bytes
+                code
+                error
+                asset_id
+                started_at
+                finished_at
+              }
+            }
+            """)
+        variables: dict[str, object] = {"limit": limit, "failedSince": failed_since}
+        response = await self.execute(
+            query=query,
+            operation_name="UserAssetImports",
+            variables=variables,
+            **kwargs,
+        )
+        data = self.get_data(response)
+        return UserAssetImports.model_validate(data)
 
     async def delete_asset_action(self, id: Any, **kwargs: Any) -> DeleteAssetAction:
         query = gql("""
@@ -1507,6 +1637,10 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   public_name
                   description
                   provider
+                  provider_info {
+                    label
+                  }
+                  icon_url
                   translations {
                     locale
                     description
@@ -1588,6 +1722,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 output
                 error_message
                 credits_charged
+                parent_run_id
+                agent_actual_credits_mc
                 created_at
                 completed_at
                 share_token
@@ -1659,6 +1795,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 output
                 error_message
                 credits_charged
+                parent_run_id
+                agent_actual_credits_mc
                 created_at
                 completed_at
                 share_token
@@ -1726,6 +1864,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 output
                 error_message
                 credits_charged
+                parent_run_id
+                agent_actual_credits_mc
                 created_at
                 completed_at
                 share_token
@@ -2061,6 +2201,8 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 output
                 error_message
                 credits_charged
+                parent_run_id
+                agent_actual_credits_mc
                 created_at
                 completed_at
                 pipeline {
@@ -2118,6 +2260,78 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         ):
             yield WatchActivePipelineRuns.model_validate(data)
 
+    async def watch_pipeline_runs_by_slug(
+        self,
+        slug: str,
+        limit: Union[Optional[int], UnsetType] = UNSET,
+        offset: Union[Optional[int], UnsetType] = UNSET,
+        **kwargs: Any,
+    ) -> AsyncIterator[WatchPipelineRunsBySlug]:
+        query = gql("""
+            subscription WatchPipelineRunsBySlug($slug: String!, $limit: Int = 10, $offset: Int = 0) {
+              pipeline_runs(
+                where: {pipeline: {slug: {_eq: $slug}}}
+                order_by: {created_at: desc}
+                limit: $limit
+                offset: $offset
+              ) {
+                id
+                status
+                pipeline {
+                  name
+                  slug
+                  output_schema
+                  input_schema
+                  ui_schema
+                  cancellable
+                }
+                input
+                output
+                error_message
+                credits_charged
+                created_at
+                completed_at
+                share_token
+                share_watermark
+                assets {
+                  id
+                  type
+                  url
+                  thumbnail_url
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"slug": slug, "limit": limit, "offset": offset}
+        async for data in self.execute_ws(
+            query=query,
+            operation_name="WatchPipelineRunsBySlug",
+            variables=variables,
+            **kwargs,
+        ):
+            yield WatchPipelineRunsBySlug.model_validate(data)
+
+    async def watch_pipeline_run_count_by_slug(
+        self, slug: str, **kwargs: Any
+    ) -> AsyncIterator[WatchPipelineRunCountBySlug]:
+        query = gql("""
+            subscription WatchPipelineRunCountBySlug($slug: String!) {
+              pipeline_runs_aggregate(where: {pipeline: {slug: {_eq: $slug}}}) {
+                aggregate {
+                  count
+                }
+              }
+            }
+            """)
+        variables: dict[str, object] = {"slug": slug}
+        async for data in self.execute_ws(
+            query=query,
+            operation_name="WatchPipelineRunCountBySlug",
+            variables=variables,
+            **kwargs,
+        ):
+            yield WatchPipelineRunCountBySlug.model_validate(data)
+
     async def watch_notifications(
         self, limit: int, **kwargs: Any
     ) -> AsyncIterator[WatchNotifications]:
@@ -2162,10 +2376,16 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         ):
             yield WatchBillingUpdates.model_validate(data)
 
-    async def get_my_api_keys(self, **kwargs: Any) -> GetMyApiKeys:
+    async def get_my_api_keys(
+        self, limit: int, offset: int, **kwargs: Any
+    ) -> GetMyApiKeys:
         query = gql("""
-            query GetMyApiKeys {
-              personal_access_tokens(order_by: {created_at: desc}) {
+            query GetMyApiKeys($limit: Int!, $offset: Int!) {
+              personal_access_tokens(
+                order_by: [{created_at: desc}, {id: desc}]
+                limit: $limit
+                offset: $offset
+              ) {
                 id
                 name
                 scopes
@@ -2173,10 +2393,21 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 created_at
                 expires_at
                 revoked_at
+                credit_limit_mc
+                reset_period
+                window_start
+                window_used_mc
+                window_reserved_mc
+                lifetime_used_mc
+              }
+              personal_access_tokens_aggregate {
+                aggregate {
+                  count
+                }
               }
             }
             """)
-        variables: dict[str, object] = {}
+        variables: dict[str, object] = {"limit": limit, "offset": offset}
         response = await self.execute(
             query=query, operation_name="GetMyApiKeys", variables=variables, **kwargs
         )
@@ -2184,11 +2415,23 @@ class Pipe2GraphQLClient(AsyncBaseClient):
         return GetMyApiKeys.model_validate(data)
 
     async def create_personal_access_token(
-        self, name: str, **kwargs: Any
+        self,
+        name: str,
+        scopes: Union[Optional[list[str]], UnsetType] = UNSET,
+        credit_limit: Union[Optional[int], UnsetType] = UNSET,
+        reset_period: Union[Optional[str], UnsetType] = UNSET,
+        expires_in_days: Union[Optional[int], UnsetType] = UNSET,
+        **kwargs: Any,
     ) -> CreatePersonalAccessToken:
         query = gql("""
-            mutation CreatePersonalAccessToken($name: String!) {
-              create_personal_access_token(name: $name) {
+            mutation CreatePersonalAccessToken($name: String!, $scopes: [String!], $creditLimit: Int, $resetPeriod: String, $expiresInDays: Int) {
+              create_personal_access_token(
+                name: $name
+                scopes: $scopes
+                credit_limit: $creditLimit
+                reset_period: $resetPeriod
+                expires_in_days: $expiresInDays
+              ) {
                 success
                 id
                 token
@@ -2197,7 +2440,13 @@ class Pipe2GraphQLClient(AsyncBaseClient):
               }
             }
             """)
-        variables: dict[str, object] = {"name": name}
+        variables: dict[str, object] = {
+            "name": name,
+            "scopes": scopes,
+            "creditLimit": credit_limit,
+            "resetPeriod": reset_period,
+            "expiresInDays": expires_in_days,
+        }
         response = await self.execute(
             query=query,
             operation_name="CreatePersonalAccessToken",

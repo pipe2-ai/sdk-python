@@ -8,26 +8,26 @@ from pydantic import Field
 from .base_model import BaseModel
 
 
-class WatchPipelineRun(BaseModel):
-    pipeline_runs_by_pk: Optional["WatchPipelineRunPipelineRunsByPk"]
+class WatchPipelineRunsBySlug(BaseModel):
+    pipeline_runs: list["WatchPipelineRunsBySlugPipelineRuns"]
 
 
-class WatchPipelineRunPipelineRunsByPk(BaseModel):
+class WatchPipelineRunsBySlugPipelineRuns(BaseModel):
     id: Any
     status: str
+    pipeline: "WatchPipelineRunsBySlugPipelineRunsPipeline"
     input: Any
     output: Optional[Any]
     error_message: Optional[str]
     credits_charged: Optional[int]
-    parent_run_id: Optional[Any]
-    agent_actual_credits_mc: Optional[int]
     created_at: Any
     completed_at: Optional[Any]
-    pipeline: "WatchPipelineRunPipelineRunsByPkPipeline"
-    assets: list["WatchPipelineRunPipelineRunsByPkAssets"]
+    share_token: Optional[Any]
+    share_watermark: bool
+    assets: list["WatchPipelineRunsBySlugPipelineRunsAssets"]
 
 
-class WatchPipelineRunPipelineRunsByPkPipeline(BaseModel):
+class WatchPipelineRunsBySlugPipelineRunsPipeline(BaseModel):
     name: str
     slug: str
     output_schema: Any
@@ -36,12 +36,12 @@ class WatchPipelineRunPipelineRunsByPkPipeline(BaseModel):
     cancellable: bool
 
 
-class WatchPipelineRunPipelineRunsByPkAssets(BaseModel):
+class WatchPipelineRunsBySlugPipelineRunsAssets(BaseModel):
     id: Any
     type_: str = Field(alias="type")
     url: str
     thumbnail_url: Optional[str]
 
 
-WatchPipelineRun.model_rebuild()
-WatchPipelineRunPipelineRunsByPk.model_rebuild()
+WatchPipelineRunsBySlug.model_rebuild()
+WatchPipelineRunsBySlugPipelineRuns.model_rebuild()

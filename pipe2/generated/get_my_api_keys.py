@@ -8,6 +8,7 @@ from .base_model import BaseModel
 
 class GetMyApiKeys(BaseModel):
     personal_access_tokens: list["GetMyApiKeysPersonalAccessTokens"]
+    personal_access_tokens_aggregate: "GetMyApiKeysPersonalAccessTokensAggregate"
 
 
 class GetMyApiKeysPersonalAccessTokens(BaseModel):
@@ -18,6 +19,21 @@ class GetMyApiKeysPersonalAccessTokens(BaseModel):
     created_at: Any
     expires_at: Any
     revoked_at: Optional[Any]
+    credit_limit_mc: Optional[Any]
+    reset_period: str
+    window_start: Optional[Any]
+    window_used_mc: Any
+    window_reserved_mc: Any
+    lifetime_used_mc: Any
+
+
+class GetMyApiKeysPersonalAccessTokensAggregate(BaseModel):
+    aggregate: Optional["GetMyApiKeysPersonalAccessTokensAggregateAggregate"]
+
+
+class GetMyApiKeysPersonalAccessTokensAggregateAggregate(BaseModel):
+    count: int
 
 
 GetMyApiKeys.model_rebuild()
+GetMyApiKeysPersonalAccessTokensAggregate.model_rebuild()

@@ -20,6 +20,8 @@ class GetPipelineRunsPipelineRuns(BaseModel):
     output: Optional[Any]
     error_message: Optional[str]
     credits_charged: Optional[int]
+    parent_run_id: Optional[Any]
+    agent_actual_credits_mc: Optional[int]
     created_at: Any
     completed_at: Optional[Any]
     share_token: Optional[Any]

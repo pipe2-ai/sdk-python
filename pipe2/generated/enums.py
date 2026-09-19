@@ -21,6 +21,21 @@ class affiliates_select_column(str, Enum):
     whop_affiliate_id = "whop_affiliate_id"
 
 
+class asset_imports_select_column(str, Enum):
+    asset_id = "asset_id"
+    bytes_ = "bytes"
+    code = "code"
+    dismissed_at = "dismissed_at"
+    error = "error"
+    finished_at = "finished_at"
+    id = "id"
+    phase = "phase"
+    source_url = "source_url"
+    started_at = "started_at"
+    status = "status"
+    total_bytes = "total_bytes"
+
+
 class assets_select_column(str, Enum):
     created_at = "created_at"
     duration_sec = "duration_sec"
@@ -199,12 +214,18 @@ class payment_providers_select_column(str, Enum):
 
 class personal_access_tokens_select_column(str, Enum):
     created_at = "created_at"
+    credit_limit_mc = "credit_limit_mc"
     expires_at = "expires_at"
     id = "id"
     last_used_at = "last_used_at"
+    lifetime_used_mc = "lifetime_used_mc"
     name = "name"
+    reset_period = "reset_period"
     revoked_at = "revoked_at"
     scopes = "scopes"
+    window_reserved_mc = "window_reserved_mc"
+    window_start = "window_start"
+    window_used_mc = "window_used_mc"
 
 
 class pipeline_examples_select_column(str, Enum):
@@ -243,6 +264,7 @@ class pipeline_models_select_column(str, Enum):
 
 
 class pipeline_runs_select_column(str, Enum):
+    agent_actual_credits_mc = "agent_actual_credits_mc"
     completed_at = "completed_at"
     created_at = "created_at"
     credits_charged = "credits_charged"
@@ -250,6 +272,7 @@ class pipeline_runs_select_column(str, Enum):
     id = "id"
     input = "input"
     output = "output"
+    parent_run_id = "parent_run_id"
     pipeline_id = "pipeline_id"
     share_token = "share_token"
     share_watermark = "share_watermark"

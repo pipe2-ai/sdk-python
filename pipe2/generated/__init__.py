@@ -5,12 +5,14 @@ from .abort_multipart_upload import (
     AbortMultipartUploadAbortMultipartUpload,
 )
 from .add_affiliate_code import AddAffiliateCode, AddAffiliateCodeAddAffiliateCode
+from .asset_import_status import AssetImportStatus, AssetImportStatusAssetImportsByPk
 from .async_base_client import AsyncBaseClient
 from .base_model import BaseModel, Upload
 from .cancel_account_deletion import (
     CancelAccountDeletion,
     CancelAccountDeletionCancelAccountDeletion,
 )
+from .cancel_media_import import CancelMediaImport, CancelMediaImportCancelMediaImport
 from .cancel_pipeline_run import CancelPipelineRun, CancelPipelineRunCancelPipelineRun
 from .cancel_subscription import (
     CancelSubscription,
@@ -43,10 +45,15 @@ from .create_personal_access_token import (
     CreatePersonalAccessTokenCreatePersonalAccessToken,
 )
 from .delete_asset_action import DeleteAssetAction, DeleteAssetActionDeleteAsset
+from .dismiss_asset_import import (
+    DismissAssetImport,
+    DismissAssetImportUpdateAssetImports,
+)
 from .ensure_affiliate import EnsureAffiliate, EnsureAffiliateEnsureAffiliate
 from .enums import (
     affiliate_codes_select_column,
     affiliates_select_column,
+    asset_imports_select_column,
     assets_select_column,
     countries_select_column,
     credit_grants_select_column,
@@ -142,7 +149,12 @@ from .get_my_affiliate_codes import (
     GetMyAffiliateCodes,
     GetMyAffiliateCodesAffiliateCodes,
 )
-from .get_my_api_keys import GetMyApiKeys, GetMyApiKeysPersonalAccessTokens
+from .get_my_api_keys import (
+    GetMyApiKeys,
+    GetMyApiKeysPersonalAccessTokens,
+    GetMyApiKeysPersonalAccessTokensAggregate,
+    GetMyApiKeysPersonalAccessTokensAggregateAggregate,
+)
 from .get_my_referrals import (
     GetMyReferrals,
     GetMyReferralsGetMyReferrals,
@@ -233,6 +245,7 @@ from .get_user_subscription_credits import (
     GetUserSubscriptionCredits,
     GetUserSubscriptionCreditsUserCreditBalanceBreakdown,
 )
+from .import_media_url import ImportMediaURL, ImportMediaURLImportMediaUrl
 from .init_verification_flow import (
     InitVerificationFlow,
     InitVerificationFlowInitVerificationFlow,
@@ -256,6 +269,13 @@ from .input_types import (
     affiliates_order_by,
     affiliates_stream_cursor_input,
     affiliates_stream_cursor_value_input,
+    asset_imports_bool_exp,
+    asset_imports_order_by,
+    asset_imports_pk_columns_input,
+    asset_imports_set_input,
+    asset_imports_stream_cursor_input,
+    asset_imports_stream_cursor_value_input,
+    asset_imports_updates,
     assets_aggregate_bool_exp,
     assets_aggregate_bool_exp_count,
     assets_aggregate_order_by,
@@ -505,6 +525,7 @@ from .pipeline_models import (
     PipelineModels,
     PipelineModelsPipelineModels,
     PipelineModelsPipelineModelsModel,
+    PipelineModelsPipelineModelsModelProviderInfo,
     PipelineModelsPipelineModelsModelTranslations,
 )
 from .pipeline_pricing import PipelinePricing, PipelinePricingPipelinePricing
@@ -550,6 +571,7 @@ from .submit_verification_code import (
     SubmitVerificationCodeSubmitVerificationCode,
 )
 from .update_asset_tags import UpdateAssetTags, UpdateAssetTagsUpdateAssetsByPk
+from .user_asset_imports import UserAssetImports, UserAssetImportsAssetImports
 from .watch_active_pipeline_runs import (
     WatchActivePipelineRuns,
     WatchActivePipelineRunsPipelineRuns,
@@ -563,17 +585,32 @@ from .watch_pipeline_run import (
     WatchPipelineRunPipelineRunsByPkAssets,
     WatchPipelineRunPipelineRunsByPkPipeline,
 )
+from .watch_pipeline_run_count_by_slug import (
+    WatchPipelineRunCountBySlug,
+    WatchPipelineRunCountBySlugPipelineRunsAggregate,
+    WatchPipelineRunCountBySlugPipelineRunsAggregateAggregate,
+)
+from .watch_pipeline_runs_by_slug import (
+    WatchPipelineRunsBySlug,
+    WatchPipelineRunsBySlugPipelineRuns,
+    WatchPipelineRunsBySlugPipelineRunsAssets,
+    WatchPipelineRunsBySlugPipelineRunsPipeline,
+)
 
 __all__ = [
     "AbortMultipartUpload",
     "AbortMultipartUploadAbortMultipartUpload",
     "AddAffiliateCode",
     "AddAffiliateCodeAddAffiliateCode",
+    "AssetImportStatus",
+    "AssetImportStatusAssetImportsByPk",
     "AsyncBaseClient",
     "BaseModel",
     "Boolean_comparison_exp",
     "CancelAccountDeletion",
     "CancelAccountDeletionCancelAccountDeletion",
+    "CancelMediaImport",
+    "CancelMediaImportCancelMediaImport",
     "CancelPipelineRun",
     "CancelPipelineRunCancelPipelineRun",
     "CancelSubscription",
@@ -600,6 +637,8 @@ __all__ = [
     "CreatePersonalAccessTokenCreatePersonalAccessToken",
     "DeleteAssetAction",
     "DeleteAssetActionDeleteAsset",
+    "DismissAssetImport",
+    "DismissAssetImportUpdateAssetImports",
     "EnsureAffiliate",
     "EnsureAffiliateEnsureAffiliate",
     "EstimatePipelineCost",
@@ -641,6 +680,8 @@ __all__ = [
     "GetMyAffiliateCodesAffiliateCodes",
     "GetMyApiKeys",
     "GetMyApiKeysPersonalAccessTokens",
+    "GetMyApiKeysPersonalAccessTokensAggregate",
+    "GetMyApiKeysPersonalAccessTokensAggregateAggregate",
     "GetMyReferrals",
     "GetMyReferralsGetMyReferrals",
     "GetMyReferralsGetMyReferralsReferrals",
@@ -713,6 +754,8 @@ __all__ = [
     "GraphQLClientGraphQLMultiError",
     "GraphQLClientHttpError",
     "GraphQLClientInvalidResponseError",
+    "ImportMediaURL",
+    "ImportMediaURLImportMediaUrl",
     "InitVerificationFlow",
     "InitVerificationFlowInitVerificationFlow",
     "Int_comparison_exp",
@@ -734,6 +777,7 @@ __all__ = [
     "PipelineModels",
     "PipelineModelsPipelineModels",
     "PipelineModelsPipelineModelsModel",
+    "PipelineModelsPipelineModelsModelProviderInfo",
     "PipelineModelsPipelineModelsModelTranslations",
     "PipelinePricing",
     "PipelinePricingPipelinePricing",
@@ -772,6 +816,8 @@ __all__ = [
     "UpdateAssetTags",
     "UpdateAssetTagsUpdateAssetsByPk",
     "Upload",
+    "UserAssetImports",
+    "UserAssetImportsAssetImports",
     "WatchActivePipelineRuns",
     "WatchActivePipelineRunsPipelineRuns",
     "WatchActivePipelineRunsPipelineRunsPipeline",
@@ -780,9 +826,16 @@ __all__ = [
     "WatchNotifications",
     "WatchNotificationsNotifications",
     "WatchPipelineRun",
+    "WatchPipelineRunCountBySlug",
+    "WatchPipelineRunCountBySlugPipelineRunsAggregate",
+    "WatchPipelineRunCountBySlugPipelineRunsAggregateAggregate",
     "WatchPipelineRunPipelineRunsByPk",
     "WatchPipelineRunPipelineRunsByPkAssets",
     "WatchPipelineRunPipelineRunsByPkPipeline",
+    "WatchPipelineRunsBySlug",
+    "WatchPipelineRunsBySlugPipelineRuns",
+    "WatchPipelineRunsBySlugPipelineRunsAssets",
+    "WatchPipelineRunsBySlugPipelineRunsPipeline",
     "affiliate_codes_aggregate_order_by",
     "affiliate_codes_bool_exp",
     "affiliate_codes_max_order_by",
@@ -799,6 +852,14 @@ __all__ = [
     "affiliates_select_column",
     "affiliates_stream_cursor_input",
     "affiliates_stream_cursor_value_input",
+    "asset_imports_bool_exp",
+    "asset_imports_order_by",
+    "asset_imports_pk_columns_input",
+    "asset_imports_select_column",
+    "asset_imports_set_input",
+    "asset_imports_stream_cursor_input",
+    "asset_imports_stream_cursor_value_input",
+    "asset_imports_updates",
     "assets_aggregate_bool_exp",
     "assets_aggregate_bool_exp_count",
     "assets_aggregate_order_by",
