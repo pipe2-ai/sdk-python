@@ -21,7 +21,13 @@ class AssetImportStatusAssetImportsByPk(BaseModel):
     code: Optional[str]
     error: Optional[str]
     asset_id: Optional[Any]
+    asset: Optional["AssetImportStatusAssetImportsByPkAsset"]
     finished_at: Optional[Any]
 
 
+class AssetImportStatusAssetImportsByPkAsset(BaseModel):
+    url: str
+
+
 AssetImportStatus.model_rebuild()
+AssetImportStatusAssetImportsByPk.model_rebuild()

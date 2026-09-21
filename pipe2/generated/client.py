@@ -709,6 +709,9 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                 code
                 error
                 asset_id
+                asset {
+                  url
+                }
                 finished_at
               }
             }

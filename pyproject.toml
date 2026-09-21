@@ -1,6 +1,6 @@
 [project]
 name = "pipe2"
-version = "2026.09.1"
+version = "2026.09.2"
 description = "Pipe2.ai Python SDK — typed GraphQL client"
 readme = "README.md"
 license = "Apache-2.0"

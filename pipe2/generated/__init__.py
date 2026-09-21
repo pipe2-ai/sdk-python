@@ -5,7 +5,11 @@ from .abort_multipart_upload import (
     AbortMultipartUploadAbortMultipartUpload,
 )
 from .add_affiliate_code import AddAffiliateCode, AddAffiliateCodeAddAffiliateCode
-from .asset_import_status import AssetImportStatus, AssetImportStatusAssetImportsByPk
+from .asset_import_status import (
+    AssetImportStatus,
+    AssetImportStatusAssetImportsByPk,
+    AssetImportStatusAssetImportsByPkAsset,
+)
 from .async_base_client import AsyncBaseClient
 from .base_model import BaseModel, Upload
 from .cancel_account_deletion import (
@@ -604,6 +608,7 @@ __all__ = [
     "AddAffiliateCodeAddAffiliateCode",
     "AssetImportStatus",
     "AssetImportStatusAssetImportsByPk",
+    "AssetImportStatusAssetImportsByPkAsset",
     "AsyncBaseClient",
     "BaseModel",
     "Boolean_comparison_exp",
