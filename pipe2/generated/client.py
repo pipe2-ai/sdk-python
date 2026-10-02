@@ -1639,7 +1639,12 @@ class Pipe2GraphQLClient(AsyncBaseClient):
                   label
                   public_name
                   description
+                  long_description
                   provider
+                  quality_score
+                  capabilities {
+                    capability_slug
+                  }
                   provider_info {
                     label
                   }

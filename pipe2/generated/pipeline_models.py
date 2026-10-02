@@ -23,10 +23,17 @@ class PipelineModelsPipelineModelsModel(BaseModel):
     label: str
     public_name: Optional[str]
     description: str
+    long_description: Optional[str]
     provider: str
+    quality_score: Optional[Any]
+    capabilities: list["PipelineModelsPipelineModelsModelCapabilities"]
     provider_info: "PipelineModelsPipelineModelsModelProviderInfo"
     icon_url: Optional[str]
     translations: list["PipelineModelsPipelineModelsModelTranslations"]
+
+
+class PipelineModelsPipelineModelsModelCapabilities(BaseModel):
+    capability_slug: str
 
 
 class PipelineModelsPipelineModelsModelProviderInfo(BaseModel):

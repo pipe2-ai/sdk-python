@@ -573,6 +573,7 @@ class credit_grants_bool_exp(BaseModel):
     remaining_mc: Optional["bigint_comparison_exp"] = None
     source: Optional["String_comparison_exp"] = None
     status: Optional["String_comparison_exp"] = None
+    user: Optional["users_bool_exp"] = None
 
 
 class credit_grants_order_by(BaseModel):
@@ -585,6 +586,7 @@ class credit_grants_order_by(BaseModel):
     remaining_mc: Optional[order_by] = None
     source: Optional[order_by] = None
     status: Optional[order_by] = None
+    user: Optional["users_order_by"] = None
 
 
 class credit_grants_stream_cursor_input(BaseModel):
@@ -3006,6 +3008,7 @@ assets_updates.model_rebuild()
 countries_bool_exp.model_rebuild()
 countries_stream_cursor_input.model_rebuild()
 credit_grants_bool_exp.model_rebuild()
+credit_grants_order_by.model_rebuild()
 credit_grants_stream_cursor_input.model_rebuild()
 credit_pack_translations_aggregate_order_by.model_rebuild()
 credit_pack_translations_bool_exp.model_rebuild()

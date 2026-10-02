@@ -529,6 +529,7 @@ from .pipeline_models import (
     PipelineModels,
     PipelineModelsPipelineModels,
     PipelineModelsPipelineModelsModel,
+    PipelineModelsPipelineModelsModelCapabilities,
     PipelineModelsPipelineModelsModelProviderInfo,
     PipelineModelsPipelineModelsModelTranslations,
 )
@@ -782,6 +783,7 @@ __all__ = [
     "PipelineModels",
     "PipelineModelsPipelineModels",
     "PipelineModelsPipelineModelsModel",
+    "PipelineModelsPipelineModelsModelCapabilities",
     "PipelineModelsPipelineModelsModelProviderInfo",
     "PipelineModelsPipelineModelsModelTranslations",
     "PipelinePricing",
